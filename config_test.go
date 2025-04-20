@@ -3,8 +3,10 @@ package zerocfg
 import (
 	"fmt"
 	"strconv"
+	"strings"
 	"testing"
 
+	"github.com/chaindead/zerocfg/env"
 	"github.com/stretchr/testify/require"
 )
 
@@ -267,4 +269,23 @@ func Test_ConfigError(t *testing.T) {
 			}
 		})
 	}
+}
+
+func Test_Render(t *testing.T) {
+	c = defaultConfig()
+
+	var names = []string{"a", "b", "c"}
+
+	Uint(names[0], 1, "desc")
+	Str(names[1], "", "desc")
+	Int(names[2], 0, "desc")
+
+	err := Parse(env.New())
+	require.NoError(t, err)
+
+	r := Configuration()
+	for _, name := range names {
+		require.True(t, strings.Contains(r, name))
+	}
+
 }
