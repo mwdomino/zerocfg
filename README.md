@@ -6,16 +6,15 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![visitors](https://api.visitorbadge.io/api/visitors?path=github.com%2Fchaindead%2Fzerocfg&label=Visitors&countColor=%23263759&style=plastic&labelStyle=none)](https://visitorbadge.io/status?path=github.com%2Fchaindead%2Fzerocfg)
 
-`zerocfg` is a Go package that provides fast and simple configuration management with support for multiple sources. It's designed to minimize configuration boilerplate while maintaining flexibility and ease of use.
+I've always loved the elegance of Go's flag package - how clean and straightforward it is to define and use configuration options. While working on various Go projects, I found myself wanting that same simplicity but with support for YAML configs. I couldn't find anything that preserved this paradigm, so I built zerocfg.
 
 ## Features
 
+- 🛠 Simple API inpired by `flag` package
 - 🚀 Multiple configuration sources (flags, environment variables, YAML)
-- 💪 Strong type safety with compile-time checks
 - 🎯 Priority-based value resolution
-- 🛠 Simple and intuitive API
-- 📝 Automatic documentation generation
-- 🔒 Built-in support for secret values
+- 📝 Automatic documentation for configuration
+- 🎓 Custom option types and sources are supported
 
 ## Installation
 
