@@ -5,5 +5,11 @@ tasks:
     preconditions:
       - sh: gotestsum --version
         msg: install with "go install gotest.tools/gotestsum@latest"
-    cmd: gotestsum --format testdox
-  run: go run ./test/...
+    cmds:
+      - defer: rm coverage.out
+      - >
+        gotestsum --format pkgname --
+        -covermode=atomic
+        -coverprofile=coverage.out
+        ./...
+  run: go run ./test/... {{ .CLI_ARGS }}

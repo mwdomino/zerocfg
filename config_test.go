@@ -2,13 +2,21 @@ package zerocfg
 
 import (
 	"fmt"
+	"sort"
 	"strconv"
 	"strings"
 	"testing"
 
-	"github.com/chaindead/zerocfg/env"
 	"github.com/stretchr/testify/require"
 )
+
+func testConfig() *config {
+	return &config{
+		make(map[string]*Node),
+		make(map[string]string),
+		[]Parser{},
+	}
+}
 
 func val[T any](v T, create func(T, *T) Value) Value {
 	p := new(T)
@@ -29,7 +37,7 @@ func Test_ConfigOk(t *testing.T) {
 	tests := []struct {
 		name   string
 		setup  func()
-		source map[string]string
+		source map[string]any
 		expect *config
 	}{
 		{
@@ -38,7 +46,6 @@ func Test_ConfigOk(t *testing.T) {
 				Int(name, num, desc)
 				return
 			},
-			source: map[string]string{},
 			expect: &config{
 				vs: map[string]*Node{
 					name: {
@@ -55,8 +62,8 @@ func Test_ConfigOk(t *testing.T) {
 				Int(name, 0, desc)
 				return
 			},
-			source: map[string]string{
-				name: strconv.Itoa(num),
+			source: map[string]any{
+				name: num,
 			},
 			expect: &config{
 				vs: map[string]*Node{
@@ -75,8 +82,8 @@ func Test_ConfigOk(t *testing.T) {
 				Int(name, 0, desc, Alias(alias))
 				return
 			},
-			source: map[string]string{
-				name: strconv.Itoa(num),
+			source: map[string]any{
+				name: num,
 			},
 			expect: &config{
 				vs: map[string]*Node{
@@ -99,8 +106,8 @@ func Test_ConfigOk(t *testing.T) {
 				Int(name, 0, desc, Alias(alias))
 				return
 			},
-			source: map[string]string{
-				alias: strconv.Itoa(num),
+			source: map[string]any{
+				alias: num,
 			},
 			expect: &config{
 				vs: map[string]*Node{
@@ -124,8 +131,8 @@ func Test_ConfigOk(t *testing.T) {
 				Int(name, 0, desc, Group(g))
 				return
 			},
-			source: map[string]string{
-				prefix + "." + name: strconv.Itoa(num),
+			source: map[string]any{
+				prefix + "." + name: num,
 			},
 			expect: &config{
 				vs: map[string]*Node{
@@ -145,8 +152,8 @@ func Test_ConfigOk(t *testing.T) {
 				Int(name, 0, desc, Group(g))
 				return
 			},
-			source: map[string]string{
-				name: strconv.Itoa(num),
+			source: map[string]any{
+				name: num,
 			},
 			expect: &config{
 				vs: map[string]*Node{
@@ -192,10 +199,10 @@ func Test_ConfigOk(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			c = defaultConfig()
+			c = testConfig()
 			tt.setup()
 
-			err := c.applyParser(tt.source)
+			err := Parse(newMock(tt.source))
 			require.NoError(t, err)
 
 			setConfig(tt.expect)
@@ -271,8 +278,32 @@ func Test_ConfigError(t *testing.T) {
 	}
 }
 
+func Test_Unknown(t *testing.T) {
+	c = testConfig()
+	Str("known", "", "")
+
+	p := newMock(map[string]any{
+		"v1":       1,
+		"v2":       "",
+		"v3.a.b.c": false,
+		"known":    "field",
+	})
+
+	err := Parse(p)
+	u, ok := IsUnknown(err)
+	require.True(t, ok)
+
+	expected := UnknownFieldError{
+		mockType: []string{"v1", "v2", "v3.a.b.c"},
+	}
+
+	sort.Strings(expected[mockType])
+	sort.Strings(u[mockType])
+	require.EqualValues(t, expected, u)
+}
+
 func Test_Render(t *testing.T) {
-	c = defaultConfig()
+	c = testConfig()
 
 	var names = []string{"a", "b", "c"}
 
@@ -280,7 +311,7 @@ func Test_Render(t *testing.T) {
 	Str(names[1], "", "desc")
 	Int(names[2], 0, "desc")
 
-	err := Parse(env.New())
+	err := Parse(newMock(map[string]any{}))
 	require.NoError(t, err)
 
 	r := Configuration()

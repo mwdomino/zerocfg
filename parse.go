@@ -11,8 +11,9 @@ func Parse(ps ...Parser) error {
 	c.parsers = append(c.parsers, ps...)
 	awaited := c.awaited()
 
+	uErr := make(UnknownFieldError)
 	for _, p := range c.parsers {
-		found, _, err := p.Parse(awaited, ToString)
+		found, unknown, err := p.Parse(awaited, ToString)
 		if err != nil {
 			return fmt.Errorf("parse %q: %w", p.Type(), err)
 		}
@@ -22,6 +23,11 @@ func Parse(ps ...Parser) error {
 			return fmt.Errorf("apply %q: %w", p.Type(), err)
 		}
 
+		uErr.add(p.Type(), unknown)
+	}
+
+	if len(uErr) != 0 {
+		return uErr
 	}
 
 	return nil

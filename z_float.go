@@ -45,7 +45,7 @@ func (s *float64SliceValue) Set(val string) error {
 }
 
 func (s *float64SliceValue) Type() string {
-	return "float64s"
+	return "floats64"
 }
 
 func (s *float64SliceValue) String() string {
@@ -97,7 +97,7 @@ func (s *float32SliceValue) Set(val string) error {
 }
 
 func (s *float32SliceValue) Type() string {
-	return "float32s"
+	return "floats32"
 }
 
 func (s *float32SliceValue) String() string {
