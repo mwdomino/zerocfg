@@ -115,18 +115,18 @@ This helps avoid boilerplate and ensures only declared options are used.
 
 But you can ignore unknown values if desired.
 
-	```go
-	err := zfg.Parse(
-		env.New(),
-		yaml.New(path),
-	)
-	if u, ok := zfg.IsUnknown(err); !ok {
-		panic(err)
-	} else {
-		// u is map <source_name> to slice of unknown keys
-		fmt.Println(u)
-	}
-	```
+```go
+err := zfg.Parse(
+	env.New(),
+	yaml.New(path),
+)
+if u, ok := zfg.IsUnknown(err); !ok {
+	panic(err)
+} else {
+	// u is map <source_name> to slice of unknown keys
+	fmt.Println(u)
+}
+```
 
 > `env` source does not trigger unknown options to avoid false positives.
 
