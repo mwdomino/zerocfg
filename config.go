@@ -14,6 +14,7 @@ type config struct {
 	aliases map[string]string
 
 	parsers []Parser
+	locked  bool
 }
 
 func defaultConfig() *config {
@@ -21,6 +22,7 @@ func defaultConfig() *config {
 		make(map[string]*Node),
 		make(map[string]string),
 		[]Parser{flag.New()},
+		false,
 	}
 }
 

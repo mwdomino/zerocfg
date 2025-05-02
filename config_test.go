@@ -14,6 +14,7 @@ func testConfig() *config {
 		make(map[string]*Node),
 		make(map[string]string),
 		[]Parser{},
+		false,
 	}
 }
 
@@ -207,6 +208,7 @@ func Test_ConfigOk(t *testing.T) {
 	}
 
 	setConfig := func(expect *config) {
+		expect.locked = true
 		c.parsers = nil
 		if expect.vs == nil {
 			expect.vs = make(map[string]*Node)
@@ -215,6 +217,7 @@ func Test_ConfigOk(t *testing.T) {
 		if expect.aliases == nil {
 			expect.aliases = make(map[string]string)
 		}
+
 	}
 
 	for _, tt := range tests {
@@ -320,6 +323,16 @@ func Test_ParseError(t *testing.T) {
 			source: map[string]any{},
 			err:    ErrRequired,
 		},
+		{
+			name: "double parse",
+			setup: func() {
+				Int(name, 0, desc, Required())
+				_ = Parse()
+				return
+			},
+			source: map[string]any{},
+			err:    ErrDoubleParse,
+		},
 	}
 
 	for _, tt := range tests {
@@ -331,6 +344,17 @@ func Test_ParseError(t *testing.T) {
 			require.ErrorIs(t, err, tt.err)
 		})
 	}
+}
+
+func Test_RuntimeRegistration(t *testing.T) {
+	c = testConfig()
+	err := Parse(newMock(nil))
+	require.NoError(t, err)
+
+	const run = "runtime_key"
+	require.PanicsWithError(t, fmt.Errorf("key=%q: %w", run, ErrRuntimeRegistration).Error(), func() {
+		_ = Int(run, 0, "is not allowed")
+	})
 }
 
 func Test_Render(t *testing.T) {

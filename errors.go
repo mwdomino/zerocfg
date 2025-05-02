@@ -7,10 +7,12 @@ import (
 )
 
 var (
-	ErrNoSuchKey      = errors.New("no such key")
-	ErrCollidingAlias = errors.New("colliding alias with key")
-	ErrDuplicateKey   = errors.New("duplicate key")
-	ErrRequired       = errors.New("missing required fields")
+	ErrNoSuchKey           = errors.New("no such key")
+	ErrCollidingAlias      = errors.New("colliding alias with key")
+	ErrDuplicateKey        = errors.New("duplicate key")
+	ErrRequired            = errors.New("missing required fields")
+	ErrRuntimeRegistration = errors.New("misuse: runtime var registration is not allowed")
+	ErrDoubleParse         = errors.New("misuse: Parse func should be called once")
 )
 
 type UnknownFieldError map[string][]string

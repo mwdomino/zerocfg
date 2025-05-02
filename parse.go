@@ -11,6 +11,10 @@ type Parser interface {
 }
 
 func Parse(ps ...Parser) error {
+	if c.locked {
+		return ErrDoubleParse
+	}
+	c.locked = true
 	c.parsers = append(c.parsers, ps...)
 	awaited := c.awaited()
 
