@@ -119,7 +119,7 @@ zfg.Str("group-options.this-option", "", "dash usage")
 	```
 
 - No key duplication is allowed. Each option key must be unique to ensure a single source of truth and avoid boilerplate.
-- Subkeys for maps (e.g., `map` and `map.value`) are not allowed.
+- Simultaneous use of keys and sub-keys (e.g., `map` and `map.value`) are not allowed
 
 ### Unknown values
 
