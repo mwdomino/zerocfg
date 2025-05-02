@@ -295,3 +295,47 @@ func Test_Render(t *testing.T) {
 	}
 
 }
+
+func Test_Priority(t *testing.T) {
+	c = testConfig()
+
+	const (
+		dfault = "d"
+		first  = "a"
+		second = "b"
+		third  = "c"
+	)
+
+	v0 := Int(dfault, 0, "")
+	v1 := Int(first, 0, "")
+	v2 := Int(second, 0, "")
+	v3 := Int(third, 0, "")
+
+	err := Parse(
+		newMock(map[string]any{first: 1}),
+		newMock(map[string]any{first: 2, second: 2}),
+		newMock(map[string]any{first: 3, second: 3, third: 3}),
+	)
+	require.NoError(t, err)
+
+	vs := []int{*v0, *v1, *v2, *v3}
+	expected := []int{0, 1, 2, 3}
+	require.Equal(t, expected, vs)
+}
+
+func Test_WrongType(t *testing.T) {
+	c = testConfig()
+
+	const (
+		key   = "option_name"
+		wrong = "wrong_value"
+	)
+	Int(key, 0, "")
+
+	err := Parse(newMock(map[string]any{key: wrong}))
+	require.Error(t, err)
+
+	require.True(t, strings.Contains(err.Error(), key))
+	require.True(t, strings.Contains(err.Error(), mockType))
+	require.True(t, strings.Contains(err.Error(), wrong))
+}

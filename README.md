@@ -10,11 +10,12 @@ I've always loved the elegance of Go's flag package - how clean and straightforw
 
 ## Features
 
-- 🛠 Simple API inpired by `flag` package
-- 🚀 Multiple configuration sources (flags, environment variables, YAML)
-- 🎯 Priority-based value resolution
-- 📝 Automatic documentation for configuration
-- 🎓 Custom option types and sources are supported
+- 🛠️ Simple and flexible API inspired by `flag` package
+- 🍳 Boilerplate usage prohibited by design
+- 🚦 Early detection of mistyped config keys
+- ✨ Multiple configuration sources with priority-based value resolution
+- 🕵️‍♂️ Render running configuration with secret protection
+- 🧩 Custom option types and sources are supported
 
 ## Installation
 
@@ -70,6 +71,65 @@ func main() {
 }
 ```
 
+## Usage
+
+### Options naming
+
+- Dots (`.`) are used as separators for hierarchical options.
+- Option subnames preferred separation is camelCase, underscore (`_`), and dash (`-`) styles.
+
+**Example:**
+
+```go
+zfg.Str("groupOptions.thisOption", "", "camelCase usage")
+zfg.Str("group_options.this_option", "", "underscore usage")
+zfg.Str("group-options.this-option", "", "dash usage")
+```
+
+### Restrictions
+
+- Options are registered at import time. Dynamic (runtime) option registration is not supported.
+
+	```go
+	// internal/db/client.go
+	package db
+
+	import zfg "github.com/chaindead/zerocfg"
+
+	// good: options registered at import
+	var dbHost = zfg.Str("db.host", "localhost", "called on import")
+
+	// bad: dynamic registration
+	func AddOption() {
+		zfg.Str("db.dynamic", "", "not supported")
+	}
+	```
+
+- No key duplication is allowed. Each option key must be unique to ensure a single source of truth and avoid boilerplate.
+- Subkeys for maps (e.g., `map` and `map.value`) are not allowed.
+
+### Unknown values
+
+If `zfg.Parse` encounters an unknown value (e.g. variable not registered as an option), it returns an error. 
+This helps avoid boilerplate and ensures only declared options are used. 
+
+But you can ignore unknown values if desired.
+
+	```go
+	err := zfg.Parse(
+		env.New(),
+		yaml.New(path),
+	)
+	if u, ok := zfg.IsUnknown(err); !ok {
+		panic(err)
+	} else {
+		// u is map <source_name> to slice of unknown keys
+		fmt.Println(u)
+	}
+	```
+
+> `env` source does not trigger unknown options to avoid false positives.
+
 ## Configuration Sources
 
 The configuration system follows a strict priority hierarchy:
@@ -88,8 +148,7 @@ zfg.Parse(
 
 The final value resolution order will be:
 1. Command-line flags (if provided)
-2. Environment variables (if env parser added)
-3. YAML configuration (if yaml parser added)
+2. Parsers from arguments of `zfg.Parse` in same order as it is passed.
 4. Default values
 
 Important notes:
@@ -97,6 +156,29 @@ Important notes:
 - All parsers except flags are optional
 - Parser priority is determined by the order in `Parse()` function
 - Values not found in higher priority sources fall back to lower priority sources
+
+### Flag Source (Command-line Arguments)
+
+- The flag source is enabled by default and always has the highest priority.
+- You can define configuration options with aliases for convenient CLI usage.
+- Values are passed as space-separated arguments (no `=` allowed).
+- Both single dash (`-`) and double dash (`--`) prefixes are supported for flags and their aliases.
+
+**Example:**
+
+```go
+path := zfg.Str("config.path", "", "path to yaml conf file", zfg.Alias("c"))
+```
+
+You can run your application with:
+
+```
+go run ./... -c test.yaml
+# or
+go run ./... --config.path test.yaml
+```
+
+In both cases, the value `test.yaml` will be assigned to `config.path`.
 
 ### Environment Variables
 
@@ -110,10 +192,114 @@ Environment variables are automatically transformed from the configuration key f
 | api-key.secret | APIKEY_SECRET | Dashes removed |
 | under_score.value | UNDERSCORE_VALUE | Underscores removed |
 
+
 The transformation rules:
 1. Remove special characters (except letters, digits, and dots)
 2. Replace dots with underscores
 3. Convert to uppercase
+
+**Example:**
+
+Suppose you have the following configuration variable:
+
+```go
+dbUser := zfg.Str("db.user", "guest", "user of database")
+```
+
+You can set its value using an environment variable before running your application:
+
+```
+export DB_USER=admin
+```
+
+When you run your Go application, `dbUser` will be set to `admin` if the environment variable is present.
+
+### YAML Source
+
+- Options use dotted paths to map to YAML keys, supporting hierarchical configuration.
+- All naming styles are supported and mapped to YAML keys as written.
+
+**Example YAML file:**
+
+```yaml
+group:
+  option: "foo"
+
+numbers:
+  - 1
+  - 2
+  - 3
+
+limits:
+  max: 10
+  min: 1
+```
+
+**Example Go config:**
+
+```go
+zfg.Str("group.option", "", "hierarchical usage")
+zfg.Ints("numbers", nil, "slice of server configs")
+zfg.Map("limits", nil, "map of limits")
+```
+
+## Advanced Usage
+
+### Value Representation
+
+> [!IMPORTANT]
+> Read this section before implementing custom options or parsers.
+> - All supported option values must have a string representation
+> - Conversion to string is performed using `zfg.ToString`
+> - Types must implement `Set(string)`; the string passed is produced by `ToString` and parsing must be compatible
+> - Parsers return `map[string]string` where values are produced by the `conv` function  argument in the parser interface (internally `zfg.ToString` is used)
+
+### Custom Options
+
+You can define your own option types by implementing the `Value` interface and registering them via `Any` function.
+
+```go
+// Custom type
+type MyType struct { V string }
+
+func newValue(val MyType, p *MyType) Value {
+    *p = val
+    return (*MyType)(p)
+}
+
+func (m *MyType) Set(s string) error { m.V = s; return nil }
+func (m *MyType) String() string    { return m.V }
+func (m *MyType) Type() string      { return "custom" }
+
+// User-friendly registration function
+func Custom(name string, defVal MyType, desc string, opts ...zfg.OptNode) *MyType {
+    return zfg.Any(name, defVal, desc, newValue, opts...)
+}
+
+// Register custom option
+myOpt := Custom("custom.opt", MyType{"default"}, "custom option")
+```
+
+### Custom Parsers
+
+You can add your own configuration sources by implementing the `Parser` interface.
+
+- If `awaited[name] == true`, the name is an option
+- If `awaited[name] == false`, the name is an alias
+
+```go
+type MyParser struct{}
+func (p *MyParser) Type() string { return "my" }
+func (p *MyParser) Parse(awaited map[string]bool, conv func(any) string) (map[string]string, map[string]string, error) {
+    found := map[string]string{}
+    unknown := map[string]string{}
+    // ... fill found/unknown based on awaited ...
+    return found, unknown, nil
+}
+
+// Usage
+zfg.Parse(&MyParser{})
+```
 
 ## Documentation
 
@@ -125,4 +311,4 @@ For detailed documentation and advanced usage examples, visit our [Godoc page](h
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/chaindead/zerocfg/blob/main/LICENCE) file for details.
