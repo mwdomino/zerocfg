@@ -7,6 +7,7 @@ type Node struct {
 	Value       Value
 	fromSource  bool
 	isSecret    bool
+	isRequired  bool
 }
 
 type OptNode func(*Node)
@@ -27,6 +28,12 @@ func Group(g *Grp) OptNode {
 	return func(n *Node) {
 		n.Name = g.key(n.Name)
 		g.applyOpts(n)
+	}
+}
+
+func Required() OptNode {
+	return func(n *Node) {
+		n.isRequired = true
 	}
 }
 

@@ -183,6 +183,27 @@ func Test_ConfigOk(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "required",
+			setup: func() {
+				Int(name, num, desc, Required())
+				return
+			},
+			source: map[string]any{
+				name: num,
+			},
+			expect: &config{
+				vs: map[string]*Node{
+					name: {
+						Name:        name,
+						Description: desc,
+						Value:       val(num, newIntValue),
+						isRequired:  true,
+						fromSource:  true,
+					},
+				},
+			},
+		},
 	}
 
 	setConfig := func(expect *config) {
@@ -273,6 +294,41 @@ func Test_ConfigError(t *testing.T) {
 			} else {
 				require.ErrorIs(t, fn(), tt.err)
 			}
+		})
+	}
+}
+
+func Test_ParseError(t *testing.T) {
+	const (
+		name = "name_key"
+		desc = "description"
+	)
+
+	tests := []struct {
+		name    string
+		setup   func()
+		source  map[string]any
+		err     error
+		isPanic bool
+	}{
+		{
+			name: "missing required",
+			setup: func() {
+				Int(name, 0, desc, Required())
+				return
+			},
+			source: map[string]any{},
+			err:    ErrRequired,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c = testConfig()
+			tt.setup()
+
+			err := Parse(newMock(tt.source))
+			require.ErrorIs(t, err, tt.err)
 		})
 	}
 }

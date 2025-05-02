@@ -1,6 +1,9 @@
 package zerocfg
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 type Parser interface {
 	Type() string
@@ -28,6 +31,16 @@ func Parse(ps ...Parser) error {
 
 	if len(uErr) != 0 {
 		return uErr
+	}
+
+	var required []string
+	for _, v := range c.vs {
+		if v.isRequired && !v.fromSource {
+			required = append(required, v.Name)
+		}
+	}
+	if len(required) != 0 {
+		return fmt.Errorf("%w: %s", ErrRequired, strings.Join(required, ", "))
 	}
 
 	return nil
