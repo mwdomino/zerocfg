@@ -8,14 +8,29 @@
 
 I've always loved the elegance of Go's flag package - how clean and straightforward it is to define and use configuration options. While working on various Go projects, I found myself wanting that same simplicity but with support for YAML configs. I couldn't find anything that preserved this paradigm, so I built zerocfg.
 
-## Features
-
 - 🛠️ Simple and flexible API inspired by `flag` package
 - 🍳 Boilerplate usage prohibited by design
 - 🚦 Early detection of mistyped config keys
 - ✨ Multiple configuration sources with priority-based value resolution
 - 🕵️‍♂️ Render running configuration with secret protection
 - 🧩 Custom option types and sources are supported
+
+## Table of Contents
+
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Usage](#usage)
+  - [Options naming](#options-naming)
+  - [Restrictions](#restrictions)
+  - [Unknown values](#unknown-values)
+- [Configuration Sources](#configuration-sources)
+  - [Command-line Arguments](#command-line-arguments)
+  - [Environment Variables](#environment-variables)
+  - [YAML Source](#yaml-source)
+- [Advanced Usage](#advanced-usage)
+  - [Value Representation](#value-representation)
+  - [Custom Options](#custom-options)
+  - [Custom Parsers](#custom-parsers)
 
 ## Installation
 
@@ -24,8 +39,6 @@ go get -u github.com/chaindead/zerocfg
 ```
 
 ## Quick Start
-
-Here's a complete example showing how to use `zerocfg`:
 
 ```go
 package main
@@ -157,7 +170,7 @@ Important notes:
 - Parser priority is determined by the order in `Parse()` function
 - Values not found in higher priority sources fall back to lower priority sources
 
-### Flag Source (Command-line Arguments)
+### Command-line Arguments
 
 - The flag source is enabled by default and always has the highest priority.
 - You can define configuration options with aliases for convenient CLI usage.
