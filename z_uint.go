@@ -19,6 +19,20 @@ func (i *uintValue) Type() string {
 	return "uint"
 }
 
+// Uint registers a uint configuration option and returns a pointer to its value.
+//
+// Arguments:
+//   - name: unique option key (dot-separated for hierarchy)
+//   - defVal: default uint value
+//   - desc: description for documentation and rendering
+//   - opts: optional OptNode modifiers (e.g., Alias, Secret, Required)
+//
+// Returns:
+//   - Pointer to the registered uint value, updated by configuration sources.
+//
+// Usage:
+//
+//	port := zerocfg.Uint("db.port", 5678, "database port")
 func Uint(name string, defVal uint, desc string, opts ...OptNode) *uint {
 	return Any(name, defVal, desc, newUintValue, opts...)
 }
@@ -40,6 +54,20 @@ func (i *uint32Value) Type() string {
 	return "uint32"
 }
 
+// Uint32 registers a uint32 configuration option and returns a pointer to its value.
+//
+// Arguments:
+//   - name: unique option key (dot-separated for hierarchy)
+//   - defVal: default uint32 value
+//   - desc: description for documentation and rendering
+//   - opts: optional OptNode modifiers (e.g., Alias, Secret, Required)
+//
+// Returns:
+//   - Pointer to the registered uint32 value, updated by configuration sources.
+//
+// Usage:
+//
+//	code := zerocfg.Uint32("status.code", 200, "status code")
 func Uint32(name string, defVal uint32, desc string, opts ...OptNode) *uint32 {
 	return Any(name, defVal, desc, newUint32Value, opts...)
 }
@@ -61,6 +89,20 @@ func (i *uint64Value) Type() string {
 	return "uint64"
 }
 
+// Uint64 registers a uint64 configuration option and returns a pointer to its value.
+//
+// Arguments:
+//   - name: unique option key (dot-separated for hierarchy)
+//   - defVal: default uint64 value
+//   - desc: description for documentation and rendering
+//   - opts: optional OptNode modifiers (e.g., Alias, Secret, Required)
+//
+// Returns:
+//   - Pointer to the registered uint64 value, updated by configuration sources.
+//
+// Usage:
+//
+//	big := zerocfg.Uint64("big.value", 1234567890, "big uint value")
 func Uint64(name string, defVal uint64, desc string, opts ...OptNode) *uint64 {
 	return Any(name, defVal, desc, newUint64Value, opts...)
 }

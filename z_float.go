@@ -25,6 +25,20 @@ func (f *float64Value) Type() string {
 	return "float64"
 }
 
+// Float64 registers a float64 configuration option and returns a pointer to its value.
+//
+// Arguments:
+//   - name: unique option key (dot-separated for hierarchy)
+//   - value: default float64 value
+//   - usage: description for documentation and rendering
+//   - opts: optional OptNode modifiers (e.g., Alias, Secret, Required)
+//
+// Returns:
+//   - Pointer to the registered float64 value, updated by configuration sources.
+//
+// Usage:
+//
+//	threshold := zerocfg.Float64("threshold", 0.5, "threshold value")
 func Float64(name string, value float64, usage string, opts ...OptNode) *float64 {
 	return Any(name, value, usage, newFloat64, opts...)
 }
@@ -44,6 +58,20 @@ func (s *float64SliceValue) Type() string {
 	return "floats64"
 }
 
+// Floats64 registers a slice of float64 configuration options and returns a pointer to its value.
+//
+// Arguments:
+//   - name: unique option key (dot-separated for hierarchy)
+//   - value: default slice of float64 values
+//   - usage: description for documentation and rendering
+//   - opts: optional OptNode modifiers (e.g., Alias, Secret, Required)
+//
+// Returns:
+//   - Pointer to the registered slice of float64 values, updated by configuration sources.
+//
+// Usage:
+//
+//	weights := zerocfg.Floats64("weights", []float64{1.1, 2.2}, "weight values")
 func Floats64(name string, value []float64, usage string, opts ...OptNode) *[]float64 {
 	return Any(name, value, usage, newFloat64Slice, opts...)
 }
@@ -68,6 +96,20 @@ func (f *float32Value) Type() string {
 	return "float32"
 }
 
+// Float32 registers a float32 configuration option and returns a pointer to its value.
+//
+// Arguments:
+//   - name: unique option key (dot-separated for hierarchy)
+//   - value: default float32 value
+//   - usage: description for documentation and rendering
+//   - opts: optional OptNode modifiers (e.g., Alias, Secret, Required)
+//
+// Returns:
+//   - Pointer to the registered float32 value, updated by configuration sources.
+//
+// Usage:
+//
+//	ratio := zerocfg.Float32("ratio", 0.25, "ratio value")
 func Float32(name string, value float32, usage string, opts ...OptNode) *float32 {
 	return Any(name, value, usage, newFloat32, opts...)
 }
@@ -87,6 +129,20 @@ func (s *float32SliceValue) Type() string {
 	return "floats32"
 }
 
+// Floats32 registers a slice of float32 configuration options and returns a pointer to its value.
+//
+// Arguments:
+//   - name: unique option key (dot-separated for hierarchy)
+//   - value: default slice of float32 values
+//   - usage: description for documentation and rendering
+//   - opts: optional OptNode modifiers (e.g., Alias, Secret, Required)
+//
+// Returns:
+//   - Pointer to the registered slice of float32 values, updated by configuration sources.
+//
+// Usage:
+//
+//	factors := zerocfg.Floats32("factors", []float32{0.1, 0.2}, "factor values")
 func Floats32(name string, value []float32, usage string, opts ...OptNode) *[]float32 {
 	return Any(name, value, usage, newFloat32Slice, opts...)
 }

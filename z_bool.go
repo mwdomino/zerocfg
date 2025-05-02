@@ -28,6 +28,20 @@ func (b *boolValue) Type() string {
 	return "bool"
 }
 
+// Bool registers a boolean configuration option and returns a pointer to its value.
+//
+// Arguments:
+//   - name: unique option key (dot-separated for hierarchy)
+//   - defVal: default boolean value
+//   - desc: description for documentation and rendering
+//   - opts: optional OptNode modifiers (e.g., Alias, Secret, Required)
+//
+// Returns:
+//   - Pointer to the registered boolean value, updated by configuration sources.
+//
+// Usage:
+//
+//	debug := zerocfg.Bool("debug", false, "enable debug mode")
 func Bool(name string, defVal bool, desc string, opts ...OptNode) *bool {
 	return Any(name, defVal, desc, newBoolValue, opts...)
 }
@@ -58,6 +72,20 @@ func (s *boolSliceValue) Type() string {
 	return "bools"
 }
 
+// Bools registers a slice of boolean configuration options and returns a pointer to its value.
+//
+// Arguments:
+//   - name: unique option key (dot-separated for hierarchy)
+//   - value: default slice of booleans
+//   - usage: description for documentation and rendering
+//   - opts: optional OptNode modifiers (e.g., Alias, Secret, Required)
+//
+// Returns:
+//   - Pointer to the registered slice of booleans, updated by configuration sources.
+//
+// Usage:
+//
+//	flags := zerocfg.Bools("feature.flags", []bool{true, false}, "feature flags")
 func Bools(name string, value []bool, usage string, opts ...OptNode) *[]bool {
 	return Any(name, value, usage, newBoolSlice, opts...)
 }

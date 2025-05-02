@@ -11,6 +11,14 @@ type Node struct {
 	isRequired  bool
 }
 
+// Value is the interface implemented by all configuration option types in zerocfg.
+//
+// Requirements:
+//   - Must support setting its value from a string:
+//     Set(string) error
+//     The string is produced by zerocfg's ToString conversion.
+//   - Must report its type name for identification and documentation:
+//     Type() string
 type Value interface {
 	Set(string) error
 	Type() string

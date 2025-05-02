@@ -5,11 +5,43 @@ import (
 	"strings"
 )
 
+// Parser defines a configuration source for zerocfg.
+//
+// Custom sources must implement this interface to provide configuration values.
+//
+// Methods:
+//   - Type() string: returns the parser's type name (e.g., "env", "yaml").
+//   - Parse(awaited, conv):
+//   - awaited: map of option names and aliases to expect (true = option, false = alias)
+//   - conv: function to convert values to string (usually zerocfg.ToString)
+
+// Returns:
+//   - found: map of recognized option names to string values
+//   - unknown: map of unrecognized names to string values
 type Parser interface {
 	Type() string
 	Parse(awaited map[string]bool, conv func(any) string) (found, unknown map[string]string, err error)
 }
 
+// Parse loads configuration from the provided sources in priority order.
+//
+// Usage:
+//
+//	err := zerocfg.Parse(env.New(), yaml.New(path))
+//
+// Priority:
+//  1. Command-line flags (always highest)
+//  2. Parsers in the order provided (first = higher priority)
+//  3. Default values (lowest)
+//
+// Behavior:
+//   - Applies each parser in order, setting values for registered options only.
+//   - Returns an error if unknown options are found (unless ignored by IsUnknown).
+//
+// Error Handling:
+//   - UnknownFieldError: for unknown keys (see IsUnknown)
+//   - ErrRequired: for missing required options
+//   - ErrDoubleParse: if called multiple times
 func Parse(ps ...Parser) error {
 	if c.locked {
 		return ErrDoubleParse

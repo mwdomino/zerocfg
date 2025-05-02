@@ -26,6 +26,20 @@ func (d *durationValue) Type() string {
 	return "duration"
 }
 
+// Dur registers a time.Duration configuration option and returns a pointer to its value.
+//
+// Arguments:
+//   - name: unique option key (dot-separated for hierarchy)
+//   - value: default time.Duration value
+//   - usage: description for documentation and rendering
+//   - opts: optional OptNode modifiers (e.g., Alias, Secret, Required)
+//
+// Returns:
+//   - Pointer to the registered time.Duration value, updated by configuration sources.
+//
+// Usage:
+//
+//	timeout := zerocfg.Dur("timeout", 5*time.Second, "timeout for operation")
 func Dur(name string, value time.Duration, usage string, opts ...OptNode) *time.Duration {
 	return Any(name, value, usage, newDuration, opts...)
 }
@@ -61,6 +75,20 @@ func (s *durationSliceValue) Type() string {
 	return "durations"
 }
 
+// Durs registers a slice of time.Duration configuration options and returns a pointer to its value.
+//
+// Arguments:
+//   - name: unique option key (dot-separated for hierarchy)
+//   - defValue: default slice of time.Duration values
+//   - desc: description for documentation and rendering
+//   - opts: optional OptNode modifiers (e.g., Alias, Secret, Required)
+//
+// Returns:
+//   - Pointer to the registered slice of time.Duration values, updated by configuration sources.
+//
+// Usage:
+//
+//	intervals := zerocfg.Durs("intervals", []time.Duration{time.Second, 2 * time.Second}, "interval durations")
 func Durs(name string, defValue []time.Duration, desc string, opts ...OptNode) *[]time.Duration {
 	return Any(name, defValue, desc, newDurationSlice, opts...)
 }
