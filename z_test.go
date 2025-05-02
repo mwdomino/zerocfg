@@ -1,7 +1,6 @@
 package zerocfg
 
 import (
-	"fmt"
 	"net"
 	"reflect"
 	"strings"
@@ -153,12 +152,11 @@ func Test_ValueOk(t *testing.T) {
 		},
 	}
 
-	dereference := func(v any) (any, error) {
+	dereference := func(t *testing.T, v any) any {
 		val := reflect.ValueOf(v)
-		if val.Kind() != reflect.Ptr {
-			return nil, fmt.Errorf("not a pointer")
-		}
-		return val.Elem().Interface(), nil
+		require.True(t, val.Kind() == reflect.Ptr, "val must be a pointer")
+
+		return val.Elem().Interface()
 	}
 
 	for _, tt := range tests {
@@ -171,15 +169,20 @@ func Test_ValueOk(t *testing.T) {
 			err := Parse(newMock(source))
 			require.NoError(t, err)
 
-			actual, err := dereference(ptr)
-			require.NoError(t, err)
-
+			actual := dereference(t, ptr)
 			require.EqualValues(t, expected, actual)
 
-			// check type name
+			// check Set and ToString is compatible
 			node, ok := c.vs[name]
 			require.True(t, ok)
 
+			err = node.Value.Set(ToString(actual))
+			require.NoError(t, err)
+
+			updatedActual := dereference(t, ptr)
+			require.Equal(t, actual, updatedActual)
+
+			// check type name
 			awaitedType := strings.Split(tt.varType, " ")[0]
 			require.Equal(t, awaitedType, node.Value.Type())
 		})

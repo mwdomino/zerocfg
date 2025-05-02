@@ -28,13 +28,6 @@ func (b *boolValue) Type() string {
 	return "bool"
 }
 
-func (b *boolValue) String() string {
-	if *b {
-		return "true"
-	}
-	return "false"
-}
-
 func Bool(name string, defVal bool, desc string, opts ...OptNode) *bool {
 	return Any(name, defVal, desc, newBoolValue, opts...)
 }
@@ -63,12 +56,6 @@ func (s *boolSliceValue) Set(val string) error {
 
 func (s *boolSliceValue) Type() string {
 	return "bools"
-}
-
-func (s *boolSliceValue) String() string {
-	data, _ := json.Marshal(*s)
-
-	return string(data)
 }
 
 func Bools(name string, value []bool, usage string, opts ...OptNode) *[]bool {

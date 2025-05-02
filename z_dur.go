@@ -26,10 +26,6 @@ func (d *durationValue) Type() string {
 	return "duration"
 }
 
-func (d *durationValue) String() string {
-	return time.Duration(*d).String()
-}
-
 func Dur(name string, value time.Duration, usage string, opts ...OptNode) *time.Duration {
 	return Any(name, value, usage, newDuration, opts...)
 }
@@ -63,16 +59,6 @@ func (s *durationSliceValue) Set(val string) error {
 
 func (s *durationSliceValue) Type() string {
 	return "durations"
-}
-
-func (s *durationSliceValue) String() string {
-	ds := make([]string, 0, len(*s))
-	for _, d := range *s {
-		ds = append(ds, d.String())
-	}
-
-	data, _ := json.Marshal(ds)
-	return string(data)
 }
 
 func Durs(name string, defValue []time.Duration, desc string, opts ...OptNode) *[]time.Duration {

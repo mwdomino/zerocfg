@@ -25,10 +25,6 @@ func (f *float64Value) Type() string {
 	return "float64"
 }
 
-func (f *float64Value) String() string {
-	return strconv.FormatFloat(float64(*f), 'g', -1, 64)
-}
-
 func Float64(name string, value float64, usage string, opts ...OptNode) *float64 {
 	return Any(name, value, usage, newFloat64, opts...)
 }
@@ -46,11 +42,6 @@ func (s *float64SliceValue) Set(val string) error {
 
 func (s *float64SliceValue) Type() string {
 	return "floats64"
-}
-
-func (s *float64SliceValue) String() string {
-	data, _ := json.Marshal(*s)
-	return string(data)
 }
 
 func Floats64(name string, value []float64, usage string, opts ...OptNode) *[]float64 {
@@ -77,10 +68,6 @@ func (f *float32Value) Type() string {
 	return "float32"
 }
 
-func (f *float32Value) String() string {
-	return strconv.FormatFloat(float64(*f), 'g', -1, 32)
-}
-
 func Float32(name string, value float32, usage string, opts ...OptNode) *float32 {
 	return Any(name, value, usage, newFloat32, opts...)
 }
@@ -98,11 +85,6 @@ func (s *float32SliceValue) Set(val string) error {
 
 func (s *float32SliceValue) Type() string {
 	return "floats32"
-}
-
-func (s *float32SliceValue) String() string {
-	data, _ := json.Marshal(*s)
-	return string(data)
 }
 
 func Floats32(name string, value []float32, usage string, opts ...OptNode) *[]float32 {

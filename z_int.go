@@ -22,8 +22,6 @@ func (i *intValue) Type() string {
 	return "int"
 }
 
-func (i *intValue) String() string { return strconv.Itoa(int(*i)) }
-
 func Int(name string, defVal int, desc string, opts ...OptNode) *int {
 	return Any(name, defVal, desc, newIntValue, opts...)
 }
@@ -44,8 +42,6 @@ func (i *int32Value) Set(s string) error {
 func (i *int32Value) Type() string {
 	return "int32"
 }
-
-func (i *int32Value) String() string { return strconv.FormatInt(int64(*i), 10) }
 
 func Int32(name string, defVal int32, desc string, opts ...OptNode) *int32 {
 	return Any(name, defVal, desc, newInt32Value, opts...)
@@ -68,8 +64,6 @@ func (i *int64Value) Type() string {
 	return "int64"
 }
 
-func (i *int64Value) String() string { return strconv.FormatInt(int64(*i), 10) }
-
 func Int64(name string, defVal int64, desc string, opts ...OptNode) *int64 {
 	return Any(name, defVal, desc, newInt64Value, opts...)
 }
@@ -87,12 +81,6 @@ func (s *intSliceValue) Set(val string) error {
 
 func (s *intSliceValue) Type() string {
 	return "ints"
-}
-
-func (s *intSliceValue) String() string {
-	data, _ := json.Marshal(*s)
-
-	return string(data)
 }
 
 func Ints(name string, defVal []int, desc string, opts ...OptNode) *[]int {

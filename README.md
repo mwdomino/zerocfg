@@ -304,7 +304,6 @@ func newValue(val MyType, p *MyType) Value {
 }
 
 func (m *MyType) Set(s string) error { m.V = s; return nil }
-func (m *MyType) String() string    { return m.V }
 func (m *MyType) Type() string      { return "custom" }
 
 // User-friendly registration function
@@ -325,6 +324,7 @@ You can add your own configuration sources by implementing the `Parser` interfac
 
 ```go
 type MyParser struct{}
+
 func (p *MyParser) Type() string { return "my" }
 func (p *MyParser) Parse(awaited map[string]bool, conv func(any) string) (map[string]string, map[string]string, error) {
     found := map[string]string{}

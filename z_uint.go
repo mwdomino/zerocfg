@@ -19,8 +19,6 @@ func (i *uintValue) Type() string {
 	return "uint"
 }
 
-func (i *uintValue) String() string { return strconv.FormatUint(uint64(*i), 10) }
-
 func Uint(name string, defVal uint, desc string, opts ...OptNode) *uint {
 	return Any(name, defVal, desc, newUintValue, opts...)
 }
@@ -42,8 +40,6 @@ func (i *uint32Value) Type() string {
 	return "uint32"
 }
 
-func (i *uint32Value) String() string { return strconv.FormatUint(uint64(*i), 10) }
-
 func Uint32(name string, defVal uint32, desc string, opts ...OptNode) *uint32 {
 	return Any(name, defVal, desc, newUint32Value, opts...)
 }
@@ -64,8 +60,6 @@ func (i *uint64Value) Set(s string) error {
 func (i *uint64Value) Type() string {
 	return "uint64"
 }
-
-func (i *uint64Value) String() string { return strconv.FormatUint(uint64(*i), 10) }
 
 func Uint64(name string, defVal uint64, desc string, opts ...OptNode) *uint64 {
 	return Any(name, defVal, desc, newUint64Value, opts...)

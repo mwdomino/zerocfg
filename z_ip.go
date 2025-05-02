@@ -25,10 +25,6 @@ func (ip *ipValue) Type() string {
 	return "ip"
 }
 
-func (ip *ipValue) String() string {
-	return net.IP(*ip).String()
-}
-
 func ipInternal(name string, defValue net.IP, desc string, opts ...OptNode) *net.IP {
 	return Any(name, defValue, desc, newIPValue, opts...)
 }

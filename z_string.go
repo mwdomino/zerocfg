@@ -18,10 +18,6 @@ func (s *stringValue) Type() string {
 	return "string"
 }
 
-func (s *stringValue) String() string {
-	return string(*s)
-}
-
 func Str(name string, defVal string, desc string, opts ...OptNode) *string {
 	return Any(name, defVal, desc, newStringValue, opts...)
 }
@@ -39,12 +35,6 @@ func (s *stringSliceValue) Set(val string) error {
 
 func (s *stringSliceValue) Type() string {
 	return "strings"
-}
-
-func (s *stringSliceValue) String() string {
-	data, _ := json.Marshal(*s)
-
-	return string(data)
 }
 
 func Strs(name string, defVal []string, desc string, opts ...OptNode) *[]string {

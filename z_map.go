@@ -23,15 +23,6 @@ func (m *mapValue) Type() string {
 	return "map"
 }
 
-func (m *mapValue) String() string {
-	if m == nil {
-		return ""
-	}
-
-	data, _ := json.Marshal(*m)
-	return string(data)
-}
-
 func mapInternal(name string, value map[string]any, usage string, opts ...OptNode) *map[string]any {
 	return Any(name, value, usage, newMapValue, opts...)
 }
