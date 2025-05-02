@@ -369,7 +369,7 @@ func Test_Render(t *testing.T) {
 	err := Parse(newMock(map[string]any{}))
 	require.NoError(t, err)
 
-	r := Configuration()
+	r := Show()
 	for _, name := range names {
 		require.True(t, strings.Contains(r, name))
 	}

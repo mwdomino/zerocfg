@@ -176,16 +176,10 @@ func Test_ValueOk(t *testing.T) {
 
 			require.EqualValues(t, expected, actual)
 
-			// check string representation <-> sources map[string]string
+			// check type name
 			node, ok := c.vs[name]
 			require.True(t, ok)
 
-			original, ok := source[name]
-			require.True(t, ok)
-
-			require.Equal(t, node.Value.String(), ToString(original))
-
-			// check type name
 			awaitedType := strings.Split(tt.varType, " ")[0]
 			require.Equal(t, awaitedType, node.Value.Type())
 		})

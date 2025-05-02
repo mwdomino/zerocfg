@@ -6,6 +6,15 @@ import (
 	"reflect"
 )
 
+// ToString returns a string representation of any value for use in configuration serialization and display.
+//
+// The conversion rules are as follows:
+//   - If the value implements fmt.Stringer, its String() method is used.
+//   - For slices or arrays whose elements implement fmt.Stringer, a JSON array of their string values is returned.
+//   - For other slices, arrays, or maps, the value is marshaled to JSON.
+//   - For all other types, fmt.Sprint is used.
+//
+// ToString is used internally by zerocfg for representing option values as strings, including when passing ToString to custom parsers and for rendering configuration output.
 func ToString(v any) string {
 	if s, ok := v.(fmt.Stringer); ok {
 		return s.String()

@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"sort"
-	"strings"
 
 	"github.com/chaindead/zerocfg/flag"
 )
@@ -88,10 +87,8 @@ func (c *config) awaited() map[string]bool {
 	return a
 }
 
-func Configuration() string {
-	b := strings.Builder{}
-	b.WriteString("config:\n")
-
+// Show returns a formatted string representation of all registered configuration options and their current values.
+func Show() string {
 	vs := make([]*Node, 0, len(c.vs))
 	for _, n := range c.vs {
 		vs = append(vs, n)
@@ -111,7 +108,7 @@ func render(vs []*Node) string {
 			maxName = l
 		}
 
-		val := v.Value.String()
+		val := ToString(v.Value)
 		if v.isSecret {
 			val = "<secret>"
 		}
@@ -123,7 +120,7 @@ func render(vs []*Node) string {
 
 	var b bytes.Buffer
 	for _, v := range vs {
-		val := v.Value.String()
+		val := ToString(v.Value)
 		if v.isSecret {
 			val = "<secret>"
 		}
