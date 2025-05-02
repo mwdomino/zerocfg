@@ -23,6 +23,7 @@ I've always loved the elegance of Go's flag package - how clean and straightforw
   - [Options naming](#options-naming)
   - [Restrictions](#restrictions)
   - [Unknown values](#unknown-values)
+  - [Complex Types as string](#complex-types-as-string)
 - [Configuration Sources](#configuration-sources)
   - [Command-line Arguments](#command-line-arguments)
   - [Environment Variables](#environment-variables)
@@ -101,7 +102,7 @@ zfg.Str("group-options.this-option", "", "dash usage")
 
 ### Restrictions
 
-- Options are registered at import time. Dynamic (runtime) option registration is not supported.
+- Options are registered at import time. Dynamic (runtime) option registration is not supported
 
 	```go
 	// internal/db/client.go
@@ -118,7 +119,7 @@ zfg.Str("group-options.this-option", "", "dash usage")
 	}
 	```
 
-- No key duplication is allowed. Each option key must be unique to ensure a single source of truth and avoid boilerplate.
+- No key duplication is allowed. Each option key must be unique to ensure a single source of truth and avoid boilerplate
 - Simultaneous use of keys and sub-keys (e.g., `map` and `map.value`) are not allowed
 
 ### Unknown values
@@ -143,6 +144,32 @@ if u, ok := zfg.IsUnknown(err); !ok {
 
 > `env` source does not trigger unknown options to avoid false positives.
 
+### Complex Types as string
+
+- Base values converted via `fmt.Sprint("%v")`
+- If a type has a `String()` method, it is used for string conversion (e.g., `time.Duration`).
+- Otherwise, JSON representation is used for complex types (e.g., slices, maps).
+
+> For converting any value to string, `zfg.ToString` is used internally.
+
+```go
+var (
+  _ = zfg.Dur("timeout", 5*time.Second, "duration via fmt.Stringer interface")
+  _ = zfg.Floats64("floats", nil, "list via json")
+)
+
+func main() {
+  _ = zfg.Parse()
+
+  fmt.Printf(zfg.Configuration())
+  // CMD: go run ./... --timeout 10s --floats '[1.1, 2.2, 3.3]'
+  // OUTPUT:
+  //   floats  = [1.1,2.2,3.3] (list via json)
+  //   timeout = 10s           (duration via fmt.Stringer interface)
+}
+
+```
+
 ## Configuration Sources
 
 The configuration system follows a strict priority hierarchy:
@@ -162,7 +189,7 @@ zfg.Parse(
 The final value resolution order will be:
 1. Command-line flags (if provided)
 2. Parsers from arguments of `zfg.Parse` in same order as it is passed.
-4. Default values
+3. Default values
 
 Important notes:
 - Lower priority sources cannot override values from higher priority sources
@@ -172,10 +199,10 @@ Important notes:
 
 ### Command-line Arguments
 
-- The flag source is enabled by default and always has the highest priority.
-- You can define configuration options with aliases for convenient CLI usage.
-- Values are passed as space-separated arguments (no `=` allowed).
-- Both single dash (`-`) and double dash (`--`) prefixes are supported for flags and their aliases.
+- The flag source is enabled by default and always has the highest priority
+- You can define configuration options with aliases for convenient CLI usage
+- Values are passed as space-separated arguments (no `=` allowed)
+- Both single dash (`-`) and double dash (`--`) prefixes are supported for flags and their aliases
 
 **Example:**
 
@@ -213,19 +240,15 @@ The transformation rules:
 
 **Example:**
 
-Suppose you have the following configuration variable:
-
 ```go
-dbUser := zfg.Str("db.user", "guest", "user of database")
+var list = zfg.Ints("list", nil, "usage example")
 ```
 
-You can set its value using an environment variable before running your application:
-
-```
-export DB_USER=admin
+```bash
+DB_USER=admin go run main.go
 ```
 
-When you run your Go application, `dbUser` will be set to `admin` if the environment variable is present.
+When you run, `dbUser` will be set to `admin`.
 
 ### YAML Source
 
