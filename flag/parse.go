@@ -17,9 +17,8 @@ func (Parser) Type() string {
 	return "flag"
 }
 
-func (Parser) Parse(awaited map[string]bool, c func(any) string) (found, unknown map[string]string, err error) {
+func (Parser) Parse(awaited map[string]bool, _ func(any) string) (found, unknown map[string]string, err error) {
 	args := os.Args[1:]
-	conv = c
 
 	found, unknown = parse(awaited, args)
 	return
@@ -51,9 +50,9 @@ func parse(awaited map[string]bool, args []string) (found, unknown map[string]st
 		}
 
 		if _, ok := awaited[name]; ok {
-			found[name] = conv(value)
+			found[name] = value
 		} else {
-			unknown[name] = conv(value)
+			unknown[name] = value
 		}
 	}
 
