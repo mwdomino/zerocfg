@@ -27,15 +27,6 @@ func (f *float64Value) Type() string {
 
 // Float64 registers a float64 configuration option and returns a pointer to its value.
 //
-// Arguments:
-//   - name: unique option key (dot-separated for hierarchy)
-//   - value: default float64 value
-//   - usage: description for documentation and rendering
-//   - opts: optional OptNode modifiers (e.g., Alias, Secret, Required)
-//
-// Returns:
-//   - Pointer to the registered float64 value, updated by configuration sources.
-//
 // Usage:
 //
 //	threshold := zerocfg.Float64("threshold", 0.5, "threshold value")
@@ -59,15 +50,6 @@ func (s *float64SliceValue) Type() string {
 }
 
 // Floats64 registers a slice of float64 configuration options and returns a pointer to its value.
-//
-// Arguments:
-//   - name: unique option key (dot-separated for hierarchy)
-//   - value: default slice of float64 values
-//   - usage: description for documentation and rendering
-//   - opts: optional OptNode modifiers (e.g., Alias, Secret, Required)
-//
-// Returns:
-//   - Pointer to the registered slice of float64 values, updated by configuration sources.
 //
 // Usage:
 //
@@ -98,15 +80,6 @@ func (f *float32Value) Type() string {
 
 // Float32 registers a float32 configuration option and returns a pointer to its value.
 //
-// Arguments:
-//   - name: unique option key (dot-separated for hierarchy)
-//   - value: default float32 value
-//   - usage: description for documentation and rendering
-//   - opts: optional OptNode modifiers (e.g., Alias, Secret, Required)
-//
-// Returns:
-//   - Pointer to the registered float32 value, updated by configuration sources.
-//
 // Usage:
 //
 //	ratio := zerocfg.Float32("ratio", 0.25, "ratio value")
@@ -130,15 +103,6 @@ func (s *float32SliceValue) Type() string {
 }
 
 // Floats32 registers a slice of float32 configuration options and returns a pointer to its value.
-//
-// Arguments:
-//   - name: unique option key (dot-separated for hierarchy)
-//   - value: default slice of float32 values
-//   - usage: description for documentation and rendering
-//   - opts: optional OptNode modifiers (e.g., Alias, Secret, Required)
-//
-// Returns:
-//   - Pointer to the registered slice of float32 values, updated by configuration sources.
 //
 // Usage:
 //

@@ -21,15 +21,6 @@ func (i *uintValue) Type() string {
 
 // Uint registers a uint configuration option and returns a pointer to its value.
 //
-// Arguments:
-//   - name: unique option key (dot-separated for hierarchy)
-//   - defVal: default uint value
-//   - desc: description for documentation and rendering
-//   - opts: optional OptNode modifiers (e.g., Alias, Secret, Required)
-//
-// Returns:
-//   - Pointer to the registered uint value, updated by configuration sources.
-//
 // Usage:
 //
 //	port := zerocfg.Uint("db.port", 5678, "database port")
@@ -56,15 +47,6 @@ func (i *uint32Value) Type() string {
 
 // Uint32 registers a uint32 configuration option and returns a pointer to its value.
 //
-// Arguments:
-//   - name: unique option key (dot-separated for hierarchy)
-//   - defVal: default uint32 value
-//   - desc: description for documentation and rendering
-//   - opts: optional OptNode modifiers (e.g., Alias, Secret, Required)
-//
-// Returns:
-//   - Pointer to the registered uint32 value, updated by configuration sources.
-//
 // Usage:
 //
 //	code := zerocfg.Uint32("status.code", 200, "status code")
@@ -90,15 +72,6 @@ func (i *uint64Value) Type() string {
 }
 
 // Uint64 registers a uint64 configuration option and returns a pointer to its value.
-//
-// Arguments:
-//   - name: unique option key (dot-separated for hierarchy)
-//   - defVal: default uint64 value
-//   - desc: description for documentation and rendering
-//   - opts: optional OptNode modifiers (e.g., Alias, Secret, Required)
-//
-// Returns:
-//   - Pointer to the registered uint64 value, updated by configuration sources.
 //
 // Usage:
 //

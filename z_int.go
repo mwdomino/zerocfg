@@ -24,15 +24,6 @@ func (i *intValue) Type() string {
 
 // Int registers an int configuration option and returns a pointer to its value.
 //
-// Arguments:
-//   - name: unique option key (dot-separated for hierarchy)
-//   - defVal: default int value
-//   - desc: description for documentation and rendering
-//   - opts: optional OptNode modifiers (e.g., Alias, Secret, Required)
-//
-// Returns:
-//   - Pointer to the registered int value, updated by configuration sources.
-//
 // Usage:
 //
 //	port := zerocfg.Int("db.port", 5432, "database port")
@@ -58,15 +49,6 @@ func (i *int32Value) Type() string {
 }
 
 // Int32 registers an int32 configuration option and returns a pointer to its value.
-//
-// Arguments:
-//   - name: unique option key (dot-separated for hierarchy)
-//   - defVal: default int32 value
-//   - desc: description for documentation and rendering
-//   - opts: optional OptNode modifiers (e.g., Alias, Secret, Required)
-//
-// Returns:
-//   - Pointer to the registered int32 value, updated by configuration sources.
 //
 // Usage:
 //
@@ -94,15 +76,6 @@ func (i *int64Value) Type() string {
 
 // Int64 registers an int64 configuration option and returns a pointer to its value.
 //
-// Arguments:
-//   - name: unique option key (dot-separated for hierarchy)
-//   - defVal: default int64 value
-//   - desc: description for documentation and rendering
-//   - opts: optional OptNode modifiers (e.g., Alias, Secret, Required)
-//
-// Returns:
-//   - Pointer to the registered int64 value, updated by configuration sources.
-//
 // Usage:
 //
 //	big := zerocfg.Int64("big.value", 1234567890, "big int value")
@@ -126,15 +99,6 @@ func (s *intSliceValue) Type() string {
 }
 
 // Ints registers a slice of int configuration options and returns a pointer to its value.
-//
-// Arguments:
-//   - name: unique option key (dot-separated for hierarchy)
-//   - defVal: default slice of int values
-//   - desc: description for documentation and rendering
-//   - opts: optional OptNode modifiers (e.g., Alias, Secret, Required)
-//
-// Returns:
-//   - Pointer to the registered slice of int values, updated by configuration sources.
 //
 // Usage:
 //

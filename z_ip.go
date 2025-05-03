@@ -31,15 +31,6 @@ func ipInternal(name string, defValue net.IP, desc string, opts ...OptNode) *net
 
 // IP registers a net.IP configuration option and returns a pointer to its value.
 //
-// Arguments:
-//   - name: unique option key (dot-separated for hierarchy)
-//   - defValue: default IP address as a string (e.g., "127.0.0.1")
-//   - desc: description for documentation and rendering
-//   - opts: optional OptNode modifiers (e.g., Alias, Secret, Required)
-//
-// Returns:
-//   - Pointer to the registered net.IP value, updated by configuration sources.
-//
 // Usage:
 //
 //	dbIP := zerocfg.IP("db.ip", "127.0.0.1", "database IP address")
