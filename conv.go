@@ -16,6 +16,10 @@ import (
 //
 // ToString is used internally by zerocfg for representing option values as strings, including when passing ToString to custom parsers and for rendering configuration output.
 func ToString(v any) string {
+	if nv, ok := dereference(v); ok {
+		return ToString(nv)
+	}
+
 	if s, ok := v.(fmt.Stringer); ok {
 		return s.String()
 	}
@@ -49,4 +53,13 @@ func ToString(v any) string {
 		// everything else: use fmt.Sprint
 		return fmt.Sprint(v)
 	}
+}
+
+func dereference(v any) (any, bool) {
+	val := reflect.ValueOf(v)
+	if val.Kind() != reflect.Ptr {
+		return nil, false
+	}
+
+	return val.Elem().Interface(), true
 }
