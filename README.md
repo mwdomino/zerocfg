@@ -74,7 +74,7 @@ func main() {
 	fmt.Printf("Connect to %s:%d creds=%s:%s\n", *ip, *port, *username, *password)
 	// OUTPUT: Connect to 127.0.0.1:5678 creds=guest:qwerty
 
-	fmt.Println(zfg.Configuration())
+	fmt.Println(zfg.Show())
 	// CMD: go run ./... -c test.yaml
 	// OUTPUT:
 	//  config.path = test.yaml      (path to yaml conf file)
@@ -161,7 +161,7 @@ var (
 func main() {
   _ = zfg.Parse()
 
-  fmt.Printf(zfg.Configuration())
+  fmt.Printf(zfg.Show())
   // CMD: go run ./... --timeout 10s --floats '[1.1, 2.2, 3.3]'
   // OUTPUT:
   //   floats  = [1.1,2.2,3.3] (list via json)
