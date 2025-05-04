@@ -20,31 +20,30 @@ func ToString(v any) string {
 		return ToString(nv)
 	}
 
-	if s, ok := v.(fmt.Stringer); ok {
+	if s, ok := stringer(v); ok {
 		return s.String()
 	}
 
 	rv := reflect.ValueOf(v)
 	rt := rv.Type()
-
 	switch rt.Kind() {
 	case reflect.Slice, reflect.Array:
-		// check if element type implements fmt.Stringer
-		stringerType := reflect.TypeOf((*fmt.Stringer)(nil)).Elem()
-		if rt.Elem().Implements(stringerType) {
-			n := rv.Len()
-			strs := make([]string, n)
-			for i := range strs {
-				// safe to assert because we checked Implements
-				strs[i] = rv.Index(i).Interface().(fmt.Stringer).String()
+		n := rv.Len()
+		strs := make([]string, 0, n)
+		for i := 0; i < n; i++ {
+			s, ok := stringer(rv.Index(i).Interface())
+			if !ok {
+				break
 			}
+			strs = append(strs, s.String())
+		}
+
+		if len(strs) > 0 {
 			data, _ := json.Marshal(strs)
 			return string(data)
 		}
 
-		// fallback: generic JSON marshal of the original slice/array
 		fallthrough
-
 	case reflect.Map:
 		b, _ := json.Marshal(v)
 		return string(b)
@@ -53,6 +52,24 @@ func ToString(v any) string {
 		// everything else: use fmt.Sprint
 		return fmt.Sprint(v)
 	}
+}
+
+func stringer(v any) (fmt.Stringer, bool) {
+	if s, ok := v.(fmt.Stringer); ok {
+		return s, true
+	}
+
+	rv := reflect.ValueOf(v)
+	if rv.Kind() != reflect.Ptr && !rv.CanAddr() {
+		ptr := reflect.New(rv.Type()).Interface()
+		reflect.ValueOf(ptr).Elem().Set(rv)
+
+		if s, ok := ptr.(fmt.Stringer); ok {
+			return s, true
+		}
+	}
+
+	return nil, false
 }
 
 func dereference(v any) (any, bool) {

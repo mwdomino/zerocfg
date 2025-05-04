@@ -296,23 +296,23 @@ You can define your own option types by implementing the `Value` interface and r
 
 ```go
 // Custom type
-type MyType struct { V string }
+type MyType struct{ V string }
 
-func newValue(val MyType, p *MyType) Value {
-    *p = val
-    return (*MyType)(p)
+func newValue(val MyType, p *MyType) zfg.Value {
+  *p = val
+  return p
 }
 
 func (m *MyType) Set(s string) error { m.V = s; return nil }
-func (m *MyType) Type() string      { return "custom" }
+func (m *MyType) Type() string       { return "custom" }
+func (m *MyType) String() string { return m.V }
 
-// User-friendly registration function
 func Custom(name string, defVal MyType, desc string, opts ...zfg.OptNode) *MyType {
-    return zfg.Any(name, defVal, desc, newValue, opts...)
+  return zfg.Any(name, defVal, desc, newValue, opts...)
 }
 
 // Register custom option
-myOpt := Custom("custom.opt", MyType{"default"}, "custom option")
+var myOpt = Custom("custom.opt", MyType{"default"}, "custom option")
 ```
 
 ### Custom Parsers
