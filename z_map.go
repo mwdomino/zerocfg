@@ -23,10 +23,6 @@ func (m *mapValue) Type() string {
 	return "map"
 }
 
-func mapInternal(name string, value map[string]any, usage string, opts ...OptNode) *map[string]any {
-	return Any(name, value, usage, newMapValue, opts...)
-}
-
 // Map registers a map[string]any configuration option and returns the map value.
 //
 // Usage:

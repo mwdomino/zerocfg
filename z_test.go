@@ -147,7 +147,9 @@ func Test_ValueOk(t *testing.T) {
 		{
 			varType: "map",
 			init: func() (func() any, any, map[string]any) {
-				return regSource(mapInternal, map[string]any{"float": 1., "str": "val"})
+				return regSource(func(name string, value map[string]any, usage string, opts ...OptNode) *map[string]any {
+					return Any(name, value, usage, newMapValue, opts...)
+				}, map[string]any{"float": 1., "str": "val"})
 			},
 		},
 	}
