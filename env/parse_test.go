@@ -55,8 +55,9 @@ func TestParse(t *testing.T) {
 			envs: map[string]string{
 				"PREFIX_FOO": "bar",
 			},
-			awaited: map[string]bool{"prefix.foo": true},
-			found:   map[string]string{"prefix.foo": "bar"},
+			awaited: map[string]bool{"foo": true},
+			found:   map[string]string{"foo": "bar"},
+			opts:    []env.Opt{env.WithPrefix("prefix")},
 		},
 	}
 

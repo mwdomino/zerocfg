@@ -38,11 +38,19 @@ func (p Parser) Type() string {
 	return "env"
 }
 
+func (p Parser) key(s string) string {
+	if p.prefix != "" {
+		return p.prefix + "." + s
+	}
+
+	return s
+}
+
 // Parse reads environment variables matching the awaited keys and returns found values.
 func (p Parser) Parse(awaited map[string]bool, _ func(any) string) (found, unknown map[string]string, err error) {
 	keys := make(map[string]string, len(awaited))
 	for k := range awaited {
-		keys[p.prefix+k] = toENV(k)
+		keys[k] = toENV(p.key(k))
 	}
 
 	found = make(map[string]string)
