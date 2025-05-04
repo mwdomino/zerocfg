@@ -9,6 +9,15 @@ type Node struct {
 	fromSource  bool
 	isSecret    bool
 	isRequired  bool
+	caller      string
+}
+
+func (n *Node) PathName() string {
+	if n.caller == "" {
+		return n.Name
+	}
+
+	return n.caller + ":" + n.Name
 }
 
 // Value is the interface implemented by all configuration option types in zerocfg.

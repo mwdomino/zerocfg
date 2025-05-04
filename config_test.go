@@ -217,7 +217,6 @@ func Test_ConfigOk(t *testing.T) {
 		if expect.aliases == nil {
 			expect.aliases = make(map[string]string)
 		}
-
 	}
 
 	for _, tt := range tests {
@@ -240,6 +239,14 @@ func Test_ConfigError(t *testing.T) {
 		desc    = "description"
 		unknown = "wrong_name"
 	)
+
+	var keyConflict = func(n1, n2 string, err error) error {
+		return errorKeyConflict(
+			&Node{Name: n1},
+			&Node{Name: n2},
+			err,
+		)
+	}
 
 	tests := []struct {
 		name    string
@@ -266,7 +273,7 @@ func Test_ConfigError(t *testing.T) {
 				Str(name+"1", "", desc, Alias(name))
 				return
 			},
-			err:     fmt.Errorf("key=%q: %w", name, ErrCollidingAlias),
+			err:     keyConflict(name+"1", name, ErrCollidingAlias),
 			isPanic: true,
 		},
 		{
@@ -276,7 +283,7 @@ func Test_ConfigError(t *testing.T) {
 				Str(name, "", desc)
 				return
 			},
-			err:     fmt.Errorf("key=%q: %w", name, ErrDuplicateKey),
+			err:     keyConflict(name, name, ErrDuplicateKey),
 			isPanic: true,
 		},
 	}

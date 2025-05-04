@@ -32,26 +32,31 @@ func (c *config) add(key string, v Value, usage string, opts ...OptNode) {
 		Name:        key,
 		Description: usage,
 		Value:       v,
+		caller:      findCaller(),
 	}
 
 	for _, opt := range opts {
 		opt(n)
 	}
 
-	if c.vs[n.Name] != nil {
-		err := fmt.Errorf("key=%q: %w", n.Name, ErrDuplicateKey)
+	if existing, ok := c.vs[n.Name]; ok {
+		err := errorKeyConflict(n, existing, ErrDuplicateKey)
 		panic(err)
 	}
 
 	c.vs[n.Name] = n
 	for _, alias := range n.Aliases {
-		if c.vs[alias] != nil {
-			err := fmt.Errorf("key=%q: %w", alias, ErrCollidingAlias)
+		if existing, ok := c.vs[alias]; ok {
+			err := errorKeyConflict(n, existing, ErrCollidingAlias)
 			panic(err)
 		}
 
 		c.aliases[alias] = n.Name
 	}
+}
+
+func errorKeyConflict(new *Node, existing *Node, err error) error {
+	return fmt.Errorf("key %q confilicts with %q: %w", new.PathName(), existing.PathName(), err)
 }
 
 func (c *config) set(key string, v string) error {

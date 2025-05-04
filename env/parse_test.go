@@ -16,6 +16,7 @@ func TestParse(t *testing.T) {
 		envs    map[string]string
 		awaited map[string]bool
 		found   map[string]string
+		opts    []env.Opt
 	}{
 		{
 			name: "simple env",
@@ -49,11 +50,19 @@ func TestParse(t *testing.T) {
 			awaited: map[string]bool{"camelCase.da-sh.under_wear": true},
 			found:   map[string]string{"camelCase.da-sh.under_wear": "bar"},
 		},
+		{
+			name: "prefix",
+			envs: map[string]string{
+				"PREFIX_FOO": "bar",
+			},
+			awaited: map[string]bool{"prefix.foo": true},
+			found:   map[string]string{"prefix.foo": "bar"},
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			p := env.New()
+			p := env.New(tt.opts...)
 
 			t.Cleanup(func() {
 				for k := range tt.envs {
