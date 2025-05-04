@@ -57,7 +57,7 @@ func Parse(ps ...Parser) error {
 			return fmt.Errorf("parse %q: %w", p.Type(), err)
 		}
 
-		err = c.applyParser(found)
+		err = c.applyParser(p.Type(), found)
 		if err != nil {
 			return fmt.Errorf("apply %q: %w", p.Type(), err)
 		}
@@ -71,7 +71,7 @@ func Parse(ps ...Parser) error {
 
 	var required []string
 	for _, v := range c.vs {
-		if v.isRequired && !v.fromSource {
+		if v.isRequired && v.setSource == "" {
 			required = append(required, v.Name)
 		}
 	}
@@ -82,9 +82,9 @@ func Parse(ps ...Parser) error {
 	return nil
 }
 
-func (c *config) applyParser(vs map[string]string) error {
+func (c *config) applyParser(source string, vs map[string]string) error {
 	for k, v := range vs {
-		err := c.set(k, v)
+		err := c.set(source, k, v)
 		if err != nil {
 			return fmt.Errorf("set key=%q: %w", k, err)
 		}

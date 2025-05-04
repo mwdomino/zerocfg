@@ -19,7 +19,7 @@ func New(path *string) *Parser {
 }
 
 func (p *Parser) Type() string {
-	return "yaml"
+	return fmt.Sprintf("yaml[%s]", *p.path)
 }
 
 func (p *Parser) Parse(keys map[string]bool, conv func(any) string) (found, unknown map[string]string, err error) {

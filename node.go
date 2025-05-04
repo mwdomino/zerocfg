@@ -6,18 +6,26 @@ type Node struct {
 	Description string
 	Aliases     []string
 	Value       Value
-	fromSource  bool
+	setSource   string
 	isSecret    bool
 	isRequired  bool
 	caller      string
 }
 
-func (n *Node) PathName() string {
+func (n *Node) pathName() string {
 	if n.caller == "" {
 		return n.Name
 	}
 
 	return n.caller + ":" + n.Name
+}
+
+func (n *Node) source() string {
+	if n.setSource == "" {
+		return "default"
+	}
+
+	return n.setSource
 }
 
 // Value is the interface implemented by all configuration option types in zerocfg.

@@ -56,10 +56,10 @@ func (c *config) add(key string, v Value, usage string, opts ...OptNode) {
 }
 
 func errorKeyConflict(new *Node, existing *Node, err error) error {
-	return fmt.Errorf("key %q confilicts with %q: %w", new.PathName(), existing.PathName(), err)
+	return fmt.Errorf("key %q confilicts with %q: %w", new.pathName(), existing.pathName(), err)
 }
 
-func (c *config) set(key string, v string) error {
+func (c *config) set(source, key string, v string) error {
 	trueKey, ok := c.aliases[key]
 	if ok {
 		key = trueKey
@@ -70,11 +70,11 @@ func (c *config) set(key string, v string) error {
 		return ErrNoSuchKey
 	}
 
-	if n.fromSource {
+	if n.setSource != "" {
 		return nil
 	}
 
-	n.fromSource = true
+	n.setSource = source
 	return c.vs[key].Value.Set(v)
 }
 
@@ -131,7 +131,7 @@ func render(vs []*Node) string {
 		}
 
 		line := fmt.Sprintf(
-			" %-*s = %-*s (%s)\n",
+			" %-*s = %-*s (%s)n",
 			maxName, v.Name,
 			maxVal, val,
 			v.Description,

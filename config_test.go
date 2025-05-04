@@ -71,7 +71,7 @@ func Test_ConfigOk(t *testing.T) {
 						Name:        name,
 						Description: desc,
 						Value:       val(num, newIntValue),
-						fromSource:  true,
+						setSource:   mockType,
 					},
 				},
 			},
@@ -92,7 +92,7 @@ func Test_ConfigOk(t *testing.T) {
 						Description: desc,
 						Value:       val(num, newIntValue),
 						Aliases:     []string{alias},
-						fromSource:  true,
+						setSource:   mockType,
 					},
 				},
 				aliases: map[string]string{
@@ -116,7 +116,7 @@ func Test_ConfigOk(t *testing.T) {
 						Description: desc,
 						Value:       val(num, newIntValue),
 						Aliases:     []string{alias},
-						fromSource:  true,
+						setSource:   mockType,
 					},
 				},
 				aliases: map[string]string{
@@ -140,7 +140,7 @@ func Test_ConfigOk(t *testing.T) {
 						Name:        prefix + "." + name,
 						Description: desc,
 						Value:       val(num, newIntValue),
-						fromSource:  true,
+						setSource:   mockType,
 					},
 				},
 			},
@@ -161,7 +161,7 @@ func Test_ConfigOk(t *testing.T) {
 						Name:        name,
 						Description: desc,
 						Value:       val(num, newIntValue),
-						fromSource:  true,
+						setSource:   mockType,
 						isSecret:    true,
 					},
 				},
@@ -200,7 +200,7 @@ func Test_ConfigOk(t *testing.T) {
 						Description: desc,
 						Value:       val(num, newIntValue),
 						isRequired:  true,
-						fromSource:  true,
+						setSource:   mockType,
 					},
 				},
 			},
@@ -294,7 +294,7 @@ func Test_ConfigError(t *testing.T) {
 				c = defaultConfig()
 				tt.setup()
 
-				return c.applyParser(tt.source)
+				return c.applyParser(mockType, tt.source)
 			}
 
 			if tt.isPanic {
@@ -373,7 +373,9 @@ func Test_Render(t *testing.T) {
 	Str(names[1], "", "desc")
 	Int(names[2], 0, "desc")
 
-	err := Parse(newMock(map[string]any{}))
+	err := Parse(newMock(map[string]any{
+		"a": 999,
+	}))
 	require.NoError(t, err)
 
 	r := Show()
