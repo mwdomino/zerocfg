@@ -1,7 +1,7 @@
 package zerocfg
 
-// Node represents a single configuration option, including its name, description, aliases, value, and metadata.
-type Node struct {
+// node represents a single configuration option, including its name, description, aliases, value, and metadata.
+type node struct {
 	Name        string
 	Description string
 	Aliases     []string
@@ -12,7 +12,7 @@ type Node struct {
 	caller      string
 }
 
-func (n *Node) pathName() string {
+func (n *node) pathName() string {
 	if n.caller == "" {
 		return n.Name
 	}
@@ -20,7 +20,7 @@ func (n *Node) pathName() string {
 	return n.caller + ":" + n.Name
 }
 
-func (n *Node) source() string {
+func (n *node) source() string {
 	if n.setSource == "" {
 		return "default"
 	}
@@ -41,13 +41,13 @@ type Value interface {
 	Type() string
 }
 
-// OptNode is a function that modifies a Node during option registration.
+// OptNode is a function that modifies a node during option registration.
 // It is used to apply additional behaviors such as aliases, secret marking, grouping, or required flags.
 //
 // Example:
 //
 //	Int("db.port", 5432, "database port", Alias("p"), Required())
-type OptNode func(*Node)
+type OptNode func(*node)
 
 // Alias returns an OptNode that adds an alias to a configuration option.
 // Aliases allow options to be referenced by alternative names (e.g., for CLI flags).
@@ -56,7 +56,7 @@ type OptNode func(*Node)
 //
 //	port := Int("db.port", 5432, "database port", Alias("p"))
 func Alias(alias string) OptNode {
-	return func(n *Node) {
+	return func(n *node) {
 		n.Aliases = append(n.Aliases, alias)
 	}
 }
@@ -68,7 +68,7 @@ func Alias(alias string) OptNode {
 //
 //	password := Str("db.password", "", "database password", Secret())
 func Secret() OptNode {
-	return func(n *Node) {
+	return func(n *node) {
 		n.isSecret = true
 	}
 }
@@ -81,7 +81,7 @@ func Secret() OptNode {
 //	g := NewGroup("db")
 //	host := Str("host", "localhost", "db host", Group(g)) // becomes "db.host"
 func Group(g *Grp) OptNode {
-	return func(n *Node) {
+	return func(n *node) {
 		n.Name = g.key(n.Name)
 		g.applyOpts(n)
 	}
@@ -94,7 +94,7 @@ func Group(g *Grp) OptNode {
 //
 //	user := Str("db.user", "", "database user", Required())
 func Required() OptNode {
-	return func(n *Node) {
+	return func(n *node) {
 		n.isRequired = true
 	}
 }

@@ -42,7 +42,7 @@ func (g *Grp) key(child string) string {
 	return g.prefix + "." + child
 }
 
-func (g *Grp) applyOpts(n *Node) {
+func (g *Grp) applyOpts(n *node) {
 	for _, opt := range g.opts {
 		opt(n)
 	}

@@ -11,7 +11,7 @@ import (
 
 func testConfig() *config {
 	return &config{
-		make(map[string]*Node),
+		make(map[string]*node),
 		make(map[string]string),
 		[]Parser{},
 		false,
@@ -47,7 +47,7 @@ func Test_ConfigOk(t *testing.T) {
 				return
 			},
 			expect: &config{
-				vs: map[string]*Node{
+				vs: map[string]*node{
 					name: {
 						Name:        name,
 						Description: desc,
@@ -66,7 +66,7 @@ func Test_ConfigOk(t *testing.T) {
 				name: num,
 			},
 			expect: &config{
-				vs: map[string]*Node{
+				vs: map[string]*node{
 					name: {
 						Name:        name,
 						Description: desc,
@@ -86,7 +86,7 @@ func Test_ConfigOk(t *testing.T) {
 				name: num,
 			},
 			expect: &config{
-				vs: map[string]*Node{
+				vs: map[string]*node{
 					name: {
 						Name:        name,
 						Description: desc,
@@ -110,7 +110,7 @@ func Test_ConfigOk(t *testing.T) {
 				alias: num,
 			},
 			expect: &config{
-				vs: map[string]*Node{
+				vs: map[string]*node{
 					name: {
 						Name:        name,
 						Description: desc,
@@ -135,7 +135,7 @@ func Test_ConfigOk(t *testing.T) {
 				prefix + "." + name: num,
 			},
 			expect: &config{
-				vs: map[string]*Node{
+				vs: map[string]*node{
 					prefix + "." + name: {
 						Name:        prefix + "." + name,
 						Description: desc,
@@ -156,7 +156,7 @@ func Test_ConfigOk(t *testing.T) {
 				name: num,
 			},
 			expect: &config{
-				vs: map[string]*Node{
+				vs: map[string]*node{
 					name: {
 						Name:        name,
 						Description: desc,
@@ -174,7 +174,7 @@ func Test_ConfigOk(t *testing.T) {
 				return
 			},
 			expect: &config{
-				vs: map[string]*Node{
+				vs: map[string]*node{
 					name: {
 						Name:        name,
 						Description: desc,
@@ -194,7 +194,7 @@ func Test_ConfigOk(t *testing.T) {
 				name: num,
 			},
 			expect: &config{
-				vs: map[string]*Node{
+				vs: map[string]*node{
 					name: {
 						Name:        name,
 						Description: desc,
@@ -211,7 +211,7 @@ func Test_ConfigOk(t *testing.T) {
 		expect.locked = true
 		c.parsers = nil
 		if expect.vs == nil {
-			expect.vs = make(map[string]*Node)
+			expect.vs = make(map[string]*node)
 		}
 
 		if expect.aliases == nil {
@@ -242,8 +242,8 @@ func Test_ConfigError(t *testing.T) {
 
 	var keyConflict = func(n1, n2 string, err error) error {
 		return errorKeyConflict(
-			&Node{Name: n1},
-			&Node{Name: n2},
+			&node{Name: n1},
+			&node{Name: n2},
 			err,
 		)
 	}

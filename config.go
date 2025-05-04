@@ -9,7 +9,7 @@ import (
 )
 
 type config struct {
-	vs      map[string]*Node
+	vs      map[string]*node
 	aliases map[string]string
 
 	parsers []Parser
@@ -18,7 +18,7 @@ type config struct {
 
 func defaultConfig() *config {
 	return &config{
-		make(map[string]*Node),
+		make(map[string]*node),
 		make(map[string]string),
 		[]Parser{flag.New()},
 		false,
@@ -28,7 +28,7 @@ func defaultConfig() *config {
 var c = defaultConfig()
 
 func (c *config) add(key string, v Value, usage string, opts ...OptNode) {
-	n := &Node{
+	n := &node{
 		Name:        key,
 		Description: usage,
 		Value:       v,
@@ -55,7 +55,7 @@ func (c *config) add(key string, v Value, usage string, opts ...OptNode) {
 	}
 }
 
-func errorKeyConflict(new *Node, existing *Node, err error) error {
+func errorKeyConflict(new *node, existing *node, err error) error {
 	return fmt.Errorf("key %q confilicts with %q: %w", new.pathName(), existing.pathName(), err)
 }
 
@@ -94,7 +94,7 @@ func (c *config) awaited() map[string]bool {
 
 // Show returns a formatted string representation of all registered configuration options and their current values.
 func Show() string {
-	vs := make([]*Node, 0, len(c.vs))
+	vs := make([]*node, 0, len(c.vs))
 	for _, n := range c.vs {
 		vs = append(vs, n)
 	}
@@ -106,7 +106,7 @@ func Show() string {
 	return render(vs)
 }
 
-func render(vs []*Node) string {
+func render(vs []*node) string {
 	var maxName, maxVal int
 	for _, v := range vs {
 		if l := len(v.Name); l > maxName {
@@ -131,7 +131,7 @@ func render(vs []*Node) string {
 		}
 
 		line := fmt.Sprintf(
-			" %-*s = %-*s (%s)n",
+			"%-*s = %-*s (%s)\n",
 			maxName, v.Name,
 			maxVal, val,
 			v.Description,
