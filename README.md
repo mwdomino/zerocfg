@@ -293,6 +293,7 @@ zfg.Map("limits", nil, "map of limits")
 ### Custom Options
 
 You can define your own option types by implementing the `Value` interface and registering them via `Any` function.
+Methods `Set` and `String` should be compatible.
 
 ```go
 // Custom type
