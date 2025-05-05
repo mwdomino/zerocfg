@@ -93,7 +93,7 @@ tags:
 			name := tempFile(t, tt.input)
 			p := yaml.New(&name)
 
-			found, unknown, err := p.Parse(tt.awaited, zfg.ToString)
+			found, unknown, err := p.Provide(tt.awaited, zfg.ToString)
 			require.NoError(t, err)
 
 			assert.Equal(t, tt.found, found)
@@ -106,7 +106,7 @@ func TestParse_Error(t *testing.T) {
 	name := tempFile(t, `invalid: [yaml: "missing closing quote`)
 	p := yaml.New(&name)
 
-	_, _, err := p.Parse(map[string]bool{}, zfg.ToString)
+	_, _, err := p.Provide(map[string]bool{}, zfg.ToString)
 	assert.Error(t, err)
 }
 

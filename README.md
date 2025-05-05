@@ -31,7 +31,7 @@ I've always loved the elegance of Go's flag package - how clean and straightforw
 - [Advanced Usage](#advanced-usage)
   - [Value Representation](#value-representation)
   - [Custom Options](#custom-options)
-  - [Custom Parsers](#custom-parsers)
+  - [Custom Providers](#custom-providers)
 
 ## Installation
 
@@ -175,7 +175,7 @@ func main() {
 The configuration system follows a strict priority hierarchy:
 
 1. Command-line flags (always highest priority, enabled by default)
-2. Optional parsers in order of addition (first added = higher priority)
+2. Optional providers in order of addition (first added = higher priority)
 3. Default values (lowest priority)
 
 For example, if you initialize configuration like this:
@@ -188,13 +188,13 @@ zfg.Parse(
 
 The final value resolution order will be:
 1. Command-line flags (if provided)
-2. Parsers from arguments of `zfg.Parse` in same order as it is passed.
+2. Providers from arguments of `zfg.Parse` in same order as it is passed.
 3. Default values
 
 Important notes:
 - Lower priority sources cannot override values from higher priority sources
-- All parsers except flags are optional
-- Parser priority is determined by the order in `Parse()` function
+- All providers except flags are optional
+- Provider priority is determined by the order in `Parse()` function
 - Values not found in higher priority sources fall back to lower priority sources
 
 ### Command-line Arguments
@@ -284,11 +284,11 @@ zfg.Map("limits", nil, "map of limits")
 ### Value Representation
 
 > [!IMPORTANT]
-> Read this section before implementing custom options or parsers.
+> Read this section before implementing custom options or providers.
 > - All supported option values must have a string representation
 > - Conversion to string is performed using `zfg.ToString`
 > - Types must implement `Set(string)`; the string passed is produced by `ToString` and parsing must be compatible
-> - Parsers return `map[string]string` where values are produced by the `conv` function  argument in the parser interface (internally `zfg.ToString` is used)
+> - Providers return `map[string]string` where values are produced by the `conv` function  argument in the provider interface (internally `zfg.ToString` is used)
 
 ### Custom Options
 
@@ -316,18 +316,18 @@ func Custom(name string, defVal MyType, desc string, opts ...zfg.OptNode) *MyTyp
 var myOpt = Custom("custom.opt", MyType{"default"}, "custom option")
 ```
 
-### Custom Parsers
+### Custom Providers
 
-You can add your own configuration sources by implementing the `Parser` interface.
+You can add your own configuration sources by implementing the `Provider` interface.
 
 - If `awaited[name] == true`, the name is an option
 - If `awaited[name] == false`, the name is an alias
 
 ```go
-type MyParser struct{}
+type MyProvider struct{}
 
-func (p *MyParser) Type() string { return "my" }
-func (p *MyParser) Parse(awaited map[string]bool, conv func(any) string) (map[string]string, map[string]string, error) {
+func (p *MyProvider) Type() string { return "my" }
+func (p *MyProvider) Provide(awaited map[string]bool, conv func(any) string) (map[string]string, map[string]string, error) {
     found := map[string]string{}
     unknown := map[string]string{}
     // ... fill found/unknown based on awaited ...
@@ -335,7 +335,7 @@ func (p *MyParser) Parse(awaited map[string]bool, conv func(any) string) (map[st
 }
 
 // Usage
-zfg.Parse(&MyParser{})
+zfg.Parse(&MyProvider{})
 ```
 
 ## Documentation

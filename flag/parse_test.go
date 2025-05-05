@@ -92,7 +92,7 @@ func TestParse(t *testing.T) {
 			p := flag.New()
 			os.Args = append([]string{"program"}, tt.args...)
 
-			found, unknown, err := p.Parse(tt.awaited, zfg.ToString)
+			found, unknown, err := p.Provide(tt.awaited, zfg.ToString)
 			require.NoError(t, err)
 
 			assert.Equal(t, tt.found, found)

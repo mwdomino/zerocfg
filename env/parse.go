@@ -8,24 +8,24 @@ import (
 
 var cleanRe = regexp.MustCompile(`[^A-Za-z0-9.]+`)
 
-type Opt func(*Parser)
+type Opt func(*Provider)
 
-// WithPrefix returns an Opt that sets the prefix for environment variable names in the Parser.
+// WithPrefix returns an Opt that sets the prefix for environment variable names in the Provider.
 func WithPrefix(prefix string) Opt {
-	return func(p *Parser) {
+	return func(p *Provider) {
 		p.prefix = prefix
 	}
 }
 
-// Parser parses environment variables for configuration.
-type Parser struct {
+// Provider parses environment variables for configuration.
+type Provider struct {
 	// Prefix to prepend to all environment variable names.
 	prefix string
 }
 
-// New creates a new Parser with the provided options.
-func New(opts ...Opt) *Parser {
-	p := &Parser{}
+// New creates a new Provider with the provided options.
+func New(opts ...Opt) *Provider {
+	p := &Provider{}
 	for _, opt := range opts {
 		opt(p)
 	}
@@ -34,11 +34,11 @@ func New(opts ...Opt) *Parser {
 }
 
 // Type returns the type name of the parser.
-func (p Parser) Type() string {
+func (p Provider) Type() string {
 	return "env"
 }
 
-func (p Parser) key(s string) string {
+func (p Provider) key(s string) string {
 	if p.prefix != "" {
 		return p.prefix + "." + s
 	}
@@ -47,7 +47,7 @@ func (p Parser) key(s string) string {
 }
 
 // Parse reads environment variables matching the awaited keys and returns found values.
-func (p Parser) Parse(awaited map[string]bool, _ func(any) string) (found, unknown map[string]string, err error) {
+func (p Provider) Provide(awaited map[string]bool, _ func(any) string) (found, unknown map[string]string, err error) {
 	keys := make(map[string]string, len(awaited))
 	for k := range awaited {
 		keys[k] = toENV(p.key(k))

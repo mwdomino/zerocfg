@@ -5,19 +5,17 @@ import (
 	"strings"
 )
 
-var conv func(any) string
+type Provider struct{}
 
-type Parser struct{}
-
-func New() Parser {
-	return Parser{}
+func New() Provider {
+	return Provider{}
 }
 
-func (Parser) Type() string {
+func (Provider) Type() string {
 	return "flag"
 }
 
-func (Parser) Parse(awaited map[string]bool, _ func(any) string) (found, unknown map[string]string, err error) {
+func (Provider) Provide(awaited map[string]bool, _ func(any) string) (found, unknown map[string]string, err error) {
 	args := os.Args[1:]
 
 	found, unknown = parse(awaited, args)

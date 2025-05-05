@@ -13,7 +13,7 @@ func testConfig() *config {
 	return &config{
 		make(map[string]*node),
 		make(map[string]string),
-		[]Parser{},
+		[]Provider{},
 		false,
 	}
 }

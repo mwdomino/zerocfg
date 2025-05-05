@@ -14,7 +14,7 @@ func (m mockParser) Type() string {
 	return mockType
 }
 
-func (m mockParser) Parse(awaited map[string]bool, conv func(any) string) (f, u map[string]string, _ error) {
+func (m mockParser) Provide(awaited map[string]bool, conv func(any) string) (f, u map[string]string, _ error) {
 	f, u = map[string]string{}, map[string]string{}
 	for k, v := range m.values {
 		if _, ok := awaited[k]; ok {

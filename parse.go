@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-// Parser defines a configuration source for zerocfg.
+// Provider defines a configuration source for zerocfg.
 //
 // Custom sources must implement this interface to provide configuration values.
 //
@@ -18,9 +18,9 @@ import (
 // Returns:
 //   - found: map of recognized option names to string values
 //   - unknown: map of unrecognized names to string values
-type Parser interface {
+type Provider interface {
 	Type() string
-	Parse(awaited map[string]bool, conv func(any) string) (found, unknown map[string]string, err error)
+	Provide(awaited map[string]bool, conv func(any) string) (found, unknown map[string]string, err error)
 }
 
 // Parse loads configuration from the provided sources in priority order.
@@ -42,7 +42,7 @@ type Parser interface {
 //   - UnknownFieldError: for unknown keys (see IsUnknown)
 //   - ErrRequired: for missing required options
 //   - ErrDoubleParse: if called multiple times
-func Parse(ps ...Parser) error {
+func Parse(ps ...Provider) error {
 	if c.locked {
 		return ErrDoubleParse
 	}
@@ -52,7 +52,7 @@ func Parse(ps ...Parser) error {
 
 	uErr := make(UnknownFieldError)
 	for _, p := range c.parsers {
-		found, unknown, err := p.Parse(awaited, ToString)
+		found, unknown, err := p.Provide(awaited, ToString)
 		if err != nil {
 			return fmt.Errorf("parse %q: %w", p.Type(), err)
 		}

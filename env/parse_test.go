@@ -78,7 +78,7 @@ func TestParse(t *testing.T) {
 				require.NoError(t, err)
 			}
 
-			found, unknown, err := p.Parse(tt.awaited, zfg.ToString)
+			found, unknown, err := p.Provide(tt.awaited, zfg.ToString)
 			require.NoError(t, err)
 			assert.Empty(t, unknown)
 
