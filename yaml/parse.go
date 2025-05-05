@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/chaindead/zerocfg/util"
 	"gopkg.in/yaml.v3"
 )
 
@@ -19,7 +20,7 @@ func New(path *string) *Provider {
 }
 
 func (p *Provider) Type() string {
-	return fmt.Sprintf("yaml[%s]", *p.path)
+	return fmt.Sprintf("yaml[%s]", util.ShortenPath(*p.path))
 }
 
 func (p *Provider) Provide(keys map[string]bool, conv func(any) string) (found, unknown map[string]string, err error) {

@@ -4,6 +4,9 @@ import (
 	"bytes"
 	"fmt"
 	"sort"
+	"strings"
+
+	"gopkg.in/yaml.v3"
 )
 
 // Show returns a formatted string representation of all registered configuration options and their current values.
@@ -19,40 +22,66 @@ func Show() string {
 
 	return render(vs)
 }
-
 func render(vs []*node) string {
-	var maxName, maxVal int
+	doc := &yaml.Node{Kind: yaml.DocumentNode}
+	root := &yaml.Node{Kind: yaml.MappingNode}
+	doc.Content = []*yaml.Node{root}
+
 	for _, v := range vs {
-		if l := len(v.Name); l > maxName {
-			maxName = l
-		}
-
-		val := ToString(v.Value)
-		if v.isSecret {
-			val = "<secret>"
-		}
-
-		if l := len(val); l > maxVal {
-			maxVal = l
-		}
+		addNode(root, v.Name, yamlValue(v), yamlDescription(v))
 	}
 
-	var b bytes.Buffer
-	for _, v := range vs {
-		val := ToString(v.Value)
-		if v.isSecret {
-			val = "<secret>"
+	var buf bytes.Buffer
+	yamlEncoder := yaml.NewEncoder(&buf)
+	yamlEncoder.SetIndent(2)
+	_ = yamlEncoder.Encode(doc)
+	_ = yamlEncoder.Close()
+	return buf.String()
+}
+
+func addNode(root *yaml.Node, path string, value any, comment string) {
+	parts := strings.Split(path, ".")
+
+	cur := root
+	for i, part := range parts {
+		var keyNode *yaml.Node
+		var valueNode *yaml.Node
+		found := false
+		for j := 0; j+1 < len(cur.Content); j += 2 {
+			if cur.Content[j].Value == part {
+				keyNode = cur.Content[j]
+				valueNode = cur.Content[j+1]
+				found = true
+				break
+			}
 		}
 
-		line := fmt.Sprintf(
-			"%-*s = %-*s (%s)\n",
-			maxName, v.Name,
-			maxVal, val,
-			v.Description,
-		)
+		if !found {
+			keyNode = &yaml.Node{Kind: yaml.ScalarNode, Value: part}
+			valueNode = &yaml.Node{Kind: yaml.MappingNode}
 
-		b.WriteString(line)
+			if i == len(parts)-1 {
+				valueNode = &yaml.Node{Kind: yaml.ScalarNode, Value: ToString(value)}
+				if comment != "" {
+					keyNode.LineComment = comment
+				}
+			}
+
+			cur.Content = append(cur.Content, keyNode, valueNode)
+		}
+
+		cur = valueNode
+	}
+}
+
+func yamlDescription(n *node) string {
+	return fmt.Sprintf("%s from %s", n.Description, n.source())
+}
+
+func yamlValue(n *node) string {
+	if n.isSecret {
+		return "<secret>"
 	}
 
-	return b.String()
+	return ToString(n.Value)
 }
