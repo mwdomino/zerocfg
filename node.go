@@ -1,5 +1,7 @@
 package zerocfg
 
+const noSource = "default"
+
 // node represents a single configuration option, including its name, description, aliases, value, and metadata.
 type node struct {
 	Name        string
@@ -22,7 +24,7 @@ func (n *node) pathName() string {
 
 func (n *node) source() string {
 	if n.setSource == "" {
-		return "default"
+		return noSource
 	}
 
 	return n.setSource

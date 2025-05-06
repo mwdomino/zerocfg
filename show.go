@@ -2,7 +2,6 @@ package zerocfg
 
 import (
 	"bytes"
-	"fmt"
 	"sort"
 	"strings"
 
@@ -75,7 +74,7 @@ func addNode(root *yaml.Node, path string, value any, comment string) {
 }
 
 func yamlDescription(n *node) string {
-	return fmt.Sprintf("%s from %s", n.Description, n.source())
+	return n.Description
 }
 
 func yamlValue(n *node) string {
