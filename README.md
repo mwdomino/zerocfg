@@ -13,7 +13,7 @@ I've always loved the elegance of Go's flag package - how clean and straightforw
 - 🚦 Early detection of mistyped config keys
 - ✨ Multiple configuration sources with priority-based value resolution
 - 🕵️‍♂️ Render running configuration with secret protection
-- 🧩 Custom option types and sources are supported
+- 🧩 Custom option types and providers are supported
 
 ## Table of Contents
 
