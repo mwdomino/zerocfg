@@ -1,5 +1,6 @@
 # Zero Effort Configuration
 
+[![Mentioned in Awesome Go](https://awesome.re/mentioned-badge.svg)](https://github.com/avelino/awesome-go?tab=readme-ov-file#configuration)
 [![GoDoc](http://img.shields.io/badge/godoc-reference-blue.svg?style=flat)](https://godoc.org/github.com/chaindead/zerocfg)
 [![Go Report Card](https://goreportcard.com/badge/github.com/chaindead/zerocfg)](https://goreportcard.com/report/github.com/chaindead/zerocfg)
 [![Codecov](https://codecov.io/gh/chaindead/zerocfg/branch/main/graph/badge.svg)](https://codecov.io/gh/chaindead/zerocfg)
