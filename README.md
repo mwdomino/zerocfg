@@ -45,43 +45,43 @@ go get -u github.com/chaindead/zerocfg
 package main
 
 import (
-	"fmt"
+    "fmt"
 
-	zfg "github.com/chaindead/zerocfg"
-	"github.com/chaindead/zerocfg/env"
-	"github.com/chaindead/zerocfg/yaml"
+    zfg "github.com/chaindead/zerocfg"
+    "github.com/chaindead/zerocfg/env"
+    "github.com/chaindead/zerocfg/yaml"
 )
 
 var (
-	// Configuration variables
-	path     = zfg.Str("config.path", "", "path to yaml conf file", zfg.Alias("c"))
-	ip       = zfg.IP("db.ip", "127.0.0.1", "database location")
-	port     = zfg.Uint("db.port", 5678, "database port")
-	username = zfg.Str("db.user", "guest", "user of database")
-	password = zfg.Str("db.password", "qwerty", "password for user", zfg.Secret())
+    // Configuration variables
+    path     = zfg.Str("config.path", "", "path to yaml conf file", zfg.Alias("c"))
+    ip       = zfg.IP("db.ip", "127.0.0.1", "database location")
+    port     = zfg.Uint("db.port", 5678, "database port")
+    username = zfg.Str("db.user", "guest", "user of database")
+    password = zfg.Str("db.password", "qwerty", "password for user", zfg.Secret())
 )
 
 func main() {
-	// Initialize configuration with multiple sources
-	err := zfg.Parse(
-		env.New(),
-		yaml.New(path),
-	)
-	if err != nil {
-		panic(err)
-	}
+    // Initialize configuration with multiple sources
+    err := zfg.Parse(
+        env.New(),
+        yaml.New(path),
+    )
+    if err != nil {
+        panic(err)
+    }
 
-	fmt.Printf("Connect to %s:%d creds=%s:%s\n", *ip, *port, *username, *password)
-	// OUTPUT: Connect to 127.0.0.1:5678 creds=guest:qwerty
+    fmt.Printf("Connect to %s:%d creds=%s:%s\n", *ip, *port, *username, *password)
+    // OUTPUT: Connect to 127.0.0.1:5678 creds=guest:qwerty
 
-	fmt.Println(zfg.Show())
-	// CMD: go run ./... -c test.yaml
-	// OUTPUT:
-	//  config.path = test.yaml      (path to yaml conf file)
-	//  db.ip       = 127.0.0.1      (database location)
-	//  db.password = <secret>       (password for user)
-	//  db.port     = 5678           (database port)
-	//  db.user     = guest          (user of database)
+    fmt.Println(zfg.Show())
+    // CMD: go run ./... -c test.yaml
+    // OUTPUT:
+    //  config.path = test.yaml      (path to yaml conf file)
+    //  db.ip       = 127.0.0.1      (database location)
+    //  db.password = <secret>       (password for user)
+    //  db.port     = 5678           (database port)
+    //  db.user     = guest          (user of database)
 }
 ```
 
@@ -104,20 +104,20 @@ zfg.Str("group-options.this-option", "", "dash usage")
 
 - Options are registered at import time. Dynamic (runtime) option registration is not supported
 
-	```go
-	// internal/db/client.go
-	package db
+    ```go
+    // internal/db/client.go
+    package db
 
-	import zfg "github.com/chaindead/zerocfg"
+    import zfg "github.com/chaindead/zerocfg"
 
-	// good: options registered at import
-	var dbHost = zfg.Str("db.host", "localhost", "called on import")
+    // good: options registered at import
+    var dbHost = zfg.Str("db.host", "localhost", "called on import")
 
-	// bad: dynamic registration
-	func AddOption() {
-		zfg.Str("db.dynamic", "", "not supported")
-	}
-	```
+    // bad: dynamic registration
+    func AddOption() {
+        zfg.Str("db.dynamic", "", "not supported")
+    }
+    ```
 
 - No key duplication is allowed. Each option key must be unique to ensure a single source of truth and avoid boilerplate
 - Simultaneous use of keys and sub-keys (e.g., `map` and `map.value`) are not allowed
@@ -131,14 +131,14 @@ But you can ignore unknown values if desired.
 
 ```go
 err := zfg.Parse(
-	env.New(),
-	yaml.New(path),
+    env.New(),
+    yaml.New(path),
 )
 if u, ok := zfg.IsUnknown(err); !ok {
-	panic(err)
+    panic(err)
 } else {
-	// u is map <source_name> to slice of unknown keys
-	fmt.Println(u)
+    // u is map <source_name> to slice of unknown keys
+    fmt.Println(u)
 }
 ```
 
@@ -154,18 +154,18 @@ if u, ok := zfg.IsUnknown(err); !ok {
 
 ```go
 var (
-  _ = zfg.Dur("timeout", 5*time.Second, "duration via fmt.Stringer interface")
-  _ = zfg.Floats64("floats", nil, "list via json")
+    _ = zfg.Dur("timeout", 5*time.Second, "duration via fmt.Stringer interface")
+    _ = zfg.Floats64("floats", nil, "list via json")
 )
 
 func main() {
-  _ = zfg.Parse()
+    _ = zfg.Parse()
 
-  fmt.Printf(zfg.Show())
-  // CMD: go run ./... --timeout 10s --floats '[1.1, 2.2, 3.3]'
-  // OUTPUT:
-  //   floats  = [1.1,2.2,3.3] (list via json)
-  //   timeout = 10s           (duration via fmt.Stringer interface)
+    fmt.Printf(zfg.Show())
+    // CMD: go run ./... --timeout 10s --floats '[1.1, 2.2, 3.3]'
+    // OUTPUT:
+    //   floats  = [1.1,2.2,3.3] (list via json)
+    //   timeout = 10s           (duration via fmt.Stringer interface)
 }
 
 ```
@@ -313,8 +313,8 @@ Methods `Set` and `String` should be compatible.
 type MyType struct{ V string }
 
 func newValue(val MyType, p *MyType) zfg.Value {
-  *p = val
-  return p
+    *p = val
+    return p
 }
 
 func (m *MyType) Set(s string) error { m.V = s; return nil }
@@ -322,7 +322,7 @@ func (m *MyType) Type() string       { return "custom" }
 func (m *MyType) String() string { return m.V }
 
 func Custom(name string, defVal MyType, desc string, opts ...zfg.OptNode) *MyType {
-  return zfg.Any(name, defVal, desc, newValue, opts...)
+     return zfg.Any(name, defVal, desc, newValue, opts...)
 }
 
 // Register custom option
