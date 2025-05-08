@@ -241,14 +241,27 @@ The transformation rules:
 **Example:**
 
 ```go
-var list = zfg.Ints("list", nil, "usage example")
-```
+import (
+    "fmt"
+    zfg "github.com/chaindead/zerocfg"
+    "github.com/chaindead/zerocfg/env"
+)
+var dbUser = zfg.Str("db.user", "", "database's username")
 
-```bash
-DB_USER=admin go run main.go
+func main() {
+    _ = zfg.Parse(
+        env.New(),
+    )
+    fmt.Printf("DB user: %s", *dbUser)
+}
 ```
 
 When you run, `dbUser` will be set to `admin`.
+
+```bash
+DB_USER=admin go run main.go
+# OUTPUT: DB user: admin
+```
 
 ### YAML Source
 
