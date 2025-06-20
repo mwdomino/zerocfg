@@ -1,4 +1,4 @@
-module github.com/chaindead/zerocfg
+module github.com/mwdomino/zerocfg
 
 go 1.20
 
