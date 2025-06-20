@@ -428,3 +428,34 @@ func Test_WrongType(t *testing.T) {
 	require.True(t, strings.Contains(err.Error(), mockType))
 	require.True(t, strings.Contains(err.Error(), wrong))
 }
+
+func Test_AsYaml(t *testing.T) {
+	c = testConfig()
+
+	Str("app.name", "myapp", "application name")
+	Int("app.port", 8080, "server port")
+	Str("db.host", "localhost", "database host")
+	Int("db.port", 5432, "database port")
+	Bool("db.ssl", true, "enable SSL")
+	Str("secret.key", "mysecret", "secret key", Secret())
+
+	err := Parse(newMock(map[string]any{
+		"app.port": 9000,
+		"db.host":  "remote-host",
+	}))
+	require.NoError(t, err)
+
+	yamlStr, err := AsYaml()
+	require.NoError(t, err)
+	require.NotEmpty(t, yamlStr)
+	
+	require.Contains(t, yamlStr, "app:")
+	require.Contains(t, yamlStr, "name: myapp")
+	require.Contains(t, yamlStr, "port: \"9000\"")
+	require.Contains(t, yamlStr, "db:")
+	require.Contains(t, yamlStr, "host: remote-host")
+	require.Contains(t, yamlStr, "port: \"5432\"")
+	require.Contains(t, yamlStr, "ssl: \"true\"")
+	require.Contains(t, yamlStr, "secret:")
+	require.Contains(t, yamlStr, "key: <secret>")
+}
